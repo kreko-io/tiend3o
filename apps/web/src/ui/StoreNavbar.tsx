@@ -12,6 +12,7 @@ import {
   Box,
   AlertTriangle,
   CheckCircle2,
+  BarChart3,
 } from "lucide-react";
 import { usePlanogramStore, ViewMode, OverlayMode, OptimizationState } from "../store/usePlanogramStore";
 
@@ -26,6 +27,8 @@ export function StoreNavbar() {
     requestAiAnalysis,
     isAiLoading,
     loadComparison,
+    isSidebarOpen,
+    toggleSidebar,
   } = usePlanogramStore();
 
   return (
@@ -171,6 +174,20 @@ export function StoreNavbar() {
             <Sparkles className="w-3.5 h-3.5" />
           )}
           Estrategia IA
+        </button>
+
+        {/* Metrics Panel Toggle */}
+        <button
+          onClick={toggleSidebar}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition ${
+            isSidebarOpen
+              ? "bg-sky-500/20 border-sky-500/50 text-sky-300 shadow-sm"
+              : "bg-slate-800/80 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700"
+          }`}
+          title={isSidebarOpen ? "Ocultar panel de métricas" : "Mostrar panel de métricas y KPIs"}
+        >
+          <BarChart3 className="w-3.5 h-3.5 text-sky-400" />
+          <span>Métricas</span>
         </button>
       </div>
     </header>

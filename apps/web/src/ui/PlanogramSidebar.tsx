@@ -14,6 +14,8 @@ import {
   Scale,
   ArrowUpRight,
   Info,
+  X,
+  BarChart3,
 } from "lucide-react";
 import { usePlanogramStore } from "../store/usePlanogramStore";
 import { HISTORICAL_AFFINITIES_10Y } from "@tiend3o/core";
@@ -30,6 +32,8 @@ export function PlanogramSidebar() {
     revenueImprovementPct,
     ergonomicViolationsResolved,
     executiveSummary,
+    isSidebarOpen,
+    setIsSidebarOpen,
   } = usePlanogramStore();
 
   const [isSummaryExpanded, setIsSummaryExpanded] = useState(true);
@@ -47,8 +51,43 @@ export function PlanogramSidebar() {
 
   const isOptimized = optimizationState === "optimized";
 
+  // When hidden in initial navigation mode: show sleek floating pill
+  if (!isSidebarOpen) {
+    return (
+      <div className="absolute right-4 top-16 z-20 pointer-events-auto">
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800/95 backdrop-blur-md border border-slate-700/80 shadow-2xl text-xs font-semibold text-slate-200 transition-all hover:scale-105 active:scale-95 group"
+          title="Ver métricas de rentabilidad, KPIs y explicabilidad"
+        >
+          <BarChart3 className="w-4 h-4 text-sky-400 group-hover:rotate-12 transition-transform" />
+          <span>Métricas de Tienda</span>
+          <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            +{revenueImprovementPct}%
+          </span>
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <aside className="absolute right-4 top-16 bottom-4 w-92 z-20 flex flex-col gap-2.5 pointer-events-none overflow-y-auto pr-1">
+    <aside className="absolute right-4 top-16 bottom-4 w-92 z-20 flex flex-col gap-2.5 pointer-events-none overflow-y-auto pr-1 animate-in fade-in slide-in-from-right-4 duration-200">
+      {/* Top Header with Hide Action */}
+      <div className="pointer-events-auto flex items-center justify-between px-3 py-1.5 bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-xl shadow-lg text-xs text-slate-300">
+        <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[11px] text-slate-400">
+          <Layers className="w-3.5 h-3.5 text-sky-400" />
+          Panel de Planograma
+        </span>
+        <button
+          onClick={() => setIsSidebarOpen(false)}
+          className="flex items-center gap-1 px-2 py-0.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition text-[11px]"
+          title="Ocultar panel para navegar con pantalla completa"
+        >
+          <span>Ocultar</span>
+          <X className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
       {/* State Status Banner */}
       <div
         className={`pointer-events-auto rounded-2xl p-3 border shadow-xl backdrop-blur-md transition-all ${
@@ -65,7 +104,7 @@ export function PlanogramSidebar() {
               <AlertTriangle className="w-4 h-4 text-amber-400" />
             )}
             <span className="text-xs font-bold uppercase tracking-wider">
-              {isOptimized ? "Distribución Optimizada (MBA + IA)" : "Estado Actual (Sub-óptimo)"}
+              {isOptimized ? "Distribución Optimizada" : "Estado Actual (Sub-óptimo)"}
             </span>
           </div>
           {isOptimized && (
@@ -154,7 +193,7 @@ export function PlanogramSidebar() {
               Pares MBA Adyacentes
             </span>
             <p className="text-sm font-bold text-slate-100 mt-0.5">
-              {kpis.highLiftPairsAdjacent} / {kpis.totalHighLiftPairs || 8}
+              {kpis.highLiftPairsAdjacent} / {kpis.totalHighLiftPairs || 10}
             </p>
             {isOptimized && (
               <span className="text-[9px] font-bold text-emerald-400">
@@ -305,13 +344,7 @@ export function PlanogramSidebar() {
             </div>
           )}
         </div>
-      ) : (
-        <div className="bg-slate-900/70 backdrop-blur-md border border-slate-800/60 rounded-2xl p-3 shadow-xl pointer-events-auto text-center py-4">
-          <p className="text-[11px] text-slate-400">
-            Haz clic sobre cualquier producto en 3D para inspeccionar sus métricas de slot y afinidades.
-          </p>
-        </div>
-      )}
+      ) : null}
     </aside>
   );
 }

@@ -34,6 +34,7 @@ interface PlanogramState {
   affinityCoverageImprovementPct: number;
   executiveSummary: string[];
   isExecutiveSummaryOpen: boolean;
+  isSidebarOpen: boolean;
 
   // AI Integration
   aiRecommendation: string | null;
@@ -46,6 +47,8 @@ interface PlanogramState {
   hoverSlot: (id: string | null) => void;
   setViewMode: (mode: ViewMode) => void;
   setExecutiveSummaryOpen: (open: boolean) => void;
+  setIsSidebarOpen: (open: boolean) => void;
+  toggleSidebar: () => void;
   setAiRecommendation: (text: string | null) => void;
   setIsAiLoading: (loading: boolean) => void;
   loadComparison: (params?: { width?: number; length?: number; bays?: number }) => Promise<void>;
@@ -108,6 +111,7 @@ export const usePlanogramStore = create<PlanogramState>((set, get) => ({
     "🔗 Co-ubicación MBA (Lift > 2.0): Se incrementó la adyacencia de pares complementarios al 100% (8/8 pares clave como Cerveza+Snacks, Leche+Cereal y Pasta+Tomate en el mismo módulo o enfrentados).",
   ],
   isExecutiveSummaryOpen: false,
+  isSidebarOpen: false,
 
   aiRecommendation: null,
   isAiLoading: false,
@@ -130,10 +134,16 @@ export const usePlanogramStore = create<PlanogramState>((set, get) => ({
   },
 
   setOverlayMode: (overlayMode) => set({ overlayMode }),
-  selectProduct: (id) => set({ selectedProductId: id }),
+  selectProduct: (id) =>
+    set({
+      selectedProductId: id,
+      ...(id ? { isSidebarOpen: true } : {}),
+    }),
   hoverSlot: (id) => set({ hoveredSlotId: id }),
   setViewMode: (viewMode) => set({ viewMode }),
   setExecutiveSummaryOpen: (isExecutiveSummaryOpen) => set({ isExecutiveSummaryOpen }),
+  setIsSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
+  toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
   setAiRecommendation: (aiRecommendation) => set({ aiRecommendation }),
   setIsAiLoading: (isAiLoading) => set({ isAiLoading }),
 
