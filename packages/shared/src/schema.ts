@@ -1,0 +1,113 @@
+import { z } from "zod";
+
+export const Dimensions3DSchema = z.object({
+  width: z.number().positive(),
+  height: z.number().positive(),
+  depth: z.number().positive(),
+});
+export type Dimensions3D = z.infer<typeof Dimensions3DSchema>;
+
+export const Position3DSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+  z: z.number(),
+});
+export type Position3D = z.infer<typeof Position3DSchema>;
+
+export const ProductCategorySchema = z.enum([
+  "dairy",
+  "bakery",
+  "beverages",
+  "snacks",
+  "produce",
+  "meat",
+  "canned_goods",
+  "personal_care",
+  "cleaning",
+  "general",
+]);
+export type ProductCategory = z.infer<typeof ProductCategorySchema>;
+
+export const ProductSchema = z.object({
+  id: z.string(),
+  sku: z.string(),
+  name: z.string(),
+  category: ProductCategorySchema,
+  dimensions: Dimensions3DSchema, // in meters (e.g. milk carton: 0.08 x 0.22 x 0.08)
+  price: z.number().positive(),
+  margin: z.number().min(0).max(1),
+  historicalSalesVelocity: z.number().nonnegative(), // units/day from 10-year data
+  modelUrl: z.string().optional(),
+  color: z.string().default("#3b82f6"),
+});
+export type Product = z.infer<typeof ProductSchema>;
+
+export const FacingSlotSchema = z.object({
+  id: z.string(),
+  slotIndex: z.number().int().nonnegative(),
+  productId: z.string().nullable(),
+  facingCount: z.number().int().positive().default(1),
+  capacityDepth: z.number().int().positive().default(5),
+});
+export type FacingSlot = z.infer<typeof FacingSlotSchema>;
+
+export const ShelfLevelSchema = z.object({
+  levelIndex: z.number().int().nonnegative(), // 0 = bottom, 1 = knee, 2 = eye level, 3 = top
+  heightOffset: z.number().nonnegative(),
+  slots: z.array(FacingSlotSchema),
+});
+export type ShelfLevel = z.infer<typeof ShelfLevelSchema>;
+
+export const GondolaBaySchema = z.object({
+  id: z.string(),
+  bayIndex: z.number().int().nonnegative(),
+  width: z.number().positive().default(1.2), // standard 1.2m bay
+  shelves: z.array(ShelfLevelSchema),
+});
+export type GondolaBay = z.infer<typeof GondolaBaySchema>;
+
+export const AisleSideSchema = z.enum(["left", "right"]);
+export type AisleSide = z.infer<typeof AisleSideSchema>;
+
+export const GondolaAisleSchema = z.object({
+  id: z.string(),
+  code: z.string(), // e.g. "Aisle-1"
+  side: AisleSideSchema,
+  start: Position3DSchema,
+  bays: z.array(GondolaBaySchema),
+  length: z.number().positive(),
+  height: z.number().positive().default(2.1),
+  depth: z.number().positive().default(0.6),
+});
+export type GondolaAisle = z.infer<typeof GondolaAisleSchema>;
+
+export const StoreSpaceSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  width: z.number().positive(), // in meters, e.g. 20m
+  length: z.number().positive(), // in meters, e.g. 35m
+  ceilingHeight: z.number().positive().default(4.0),
+  entrancePosition: Position3DSchema.default({ x: 0, y: 0, z: 0 }),
+  checkoutPosition: Position3DSchema.default({ x: 5, y: 0, z: 0 }),
+  aisleWidth: z.number().positive().default(2.2), // standard 2.2m walkway
+  gondolas: z.array(GondolaAisleSchema),
+});
+export type StoreSpace = z.infer<typeof StoreSpaceSchema>;
+
+export const ProductAffinitySchema = z.object({
+  productAId: z.string(),
+  productBId: z.string(),
+  support: z.number().min(0).max(1),
+  confidence: z.number().min(0).max(1),
+  lift: z.number().positive(), // > 1 indicates positive affinity / complementary purchase
+  coOccurrenceCount: z.number().int().nonnegative(),
+});
+export type ProductAffinity = z.infer<typeof ProductAffinitySchema>;
+
+export const PlanogramKPIsSchema = z.object({
+  totalProductsAssigned: z.number().int().nonnegative(),
+  spaceUtilizationRate: z.number().min(0).max(1),
+  affinityAlignmentScore: z.number().min(0).max(100),
+  eyeLevelRevenuePotential: z.number().nonnegative(),
+});
+export type PlanogramKPIs = z.infer<typeof PlanogramKPIsSchema>;
