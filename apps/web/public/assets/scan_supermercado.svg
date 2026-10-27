@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+    <defs>
+      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1e293b"/>
+        <stop offset="100%" stop-color="#0f172a"/>
+      </linearGradient>
+      <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#78350f"/>
+        <stop offset="50%" stop-color="#92400e"/>
+        <stop offset="100%" stop-color="#78350f"/>
+      </linearGradient>
+      <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#0284c7" stop-opacity="0.6"/>
+      </linearGradient>
+    </defs>
+    <!-- Background Store Wall -->
+    <rect width="800" height="500" fill="url(#wall)"/>
+    <!-- Floor Tiles -->
+    <rect y="320" width="800" height="180" fill="#334155"/>
+    <line x1="0" y1="380" x2="800" y2="380" stroke="#475569" stroke-width="2"/>
+    <line x1="0" y1="440" x2="800" y2="440" stroke="#475569" stroke-width="2"/>
+    <line x1="200" y1="320" x2="100" y2="500" stroke="#475569" stroke-width="2"/>
+    <line x1="400" y1="320" x2="350" y2="500" stroke="#475569" stroke-width="2"/>
+    <line x1="600" y1="320" x2="600" y2="500" stroke="#475569" stroke-width="2"/>
+
+    <!-- Back Wall Shelving (WallShelving) -->
+    <rect x="60" y="40" width="560" height="260" fill="url(#wood)" rx="4"/>
+    <!-- Shelf 1 - Top Oils & Flour -->
+    <rect x="70" y="50" width="540" height="50" fill="#451a03"/>
+    <rect x="90" y="55" width="35" height="40" fill="#eab308" rx="3"/><text x="95" y="78" font-size="9" fill="#000" font-weight="bold">ACEITE</text>
+    <rect x="135" y="55" width="35" height="40" fill="#eab308" rx="3"/>
+    <rect x="180" y="55" width="35" height="40" fill="#eab308" rx="3"/>
+    <rect x="230" y="55" width="40" height="40" fill="#f8fafc" rx="2"/><text x="235" y="78" font-size="8" fill="#000" font-weight="bold">HARINA</text>
+    <rect x="280" y="55" width="40" height="40" fill="#f8fafc" rx="2"/>
+    <rect x="330" y="55" width="40" height="40" fill="#f8fafc" rx="2"/>
+    <rect x="390" y="60" width="50" height="35" fill="#f97316" rx="2"/><text x="395" y="80" font-size="8" fill="#fff" font-weight="bold">ARROZ</text>
+    <rect x="450" y="60" width="50" height="35" fill="#f97316" rx="2"/>
+
+    <!-- Shelf 2 - Canned Goods & Salsas -->
+    <rect x="70" y="110" width="540" height="50" fill="#451a03"/>
+    <rect x="90" y="118" width="28" height="36" fill="#ef4444" rx="3"/><text x="93" y="138" font-size="7" fill="#fff" font-weight="bold">TOMATE</text>
+    <rect x="125" y="118" width="28" height="36" fill="#ef4444" rx="3"/>
+    <rect x="160" y="118" width="28" height="36" fill="#ef4444" rx="3"/>
+    <rect x="200" y="118" width="30" height="36" fill="#0284c7" rx="3"/><text x="205" y="138" font-size="8" fill="#fff" font-weight="bold">ATÚN</text>
+    <rect x="240" y="118" width="30" height="36" fill="#0284c7" rx="3"/>
+    <rect x="280" y="118" width="30" height="36" fill="#0284c7" rx="3"/>
+    <rect x="330" y="118" width="32" height="36" fill="#15803d" rx="3"/><text x="335" y="138" font-size="8" fill="#fff" font-weight="bold">MAÍZ</text>
+    <rect x="370" y="118" width="32" height="36" fill="#15803d" rx="3"/>
+
+    <!-- Shelf 3 - Coffee & Breakfast -->
+    <rect x="70" y="170" width="540" height="50" fill="#451a03"/>
+    <rect x="90" y="176" width="36" height="40" fill="#78350f" rx="3"/><text x="96" y="200" font-size="8" fill="#fff" font-weight="bold">CAFÉ</text>
+    <rect x="135" y="176" width="36" height="40" fill="#78350f" rx="3"/>
+    <rect x="180" y="176" width="36" height="40" fill="#78350f" rx="3"/>
+    <rect x="230" y="176" width="32" height="40" fill="#3b82f6" rx="3"/><text x="233" y="200" font-size="7" fill="#fff" font-weight="bold">LECHE</text>
+    <rect x="270" y="176" width="32" height="40" fill="#3b82f6" rx="3"/>
+
+    <!-- Cooler Unit on Right (CoolerUnit) -->
+    <rect x="640" y="60" width="140" height="380" fill="#0284c7" rx="6"/>
+    <rect x="648" y="70" width="124" height="40" fill="#0369a1" rx="4"/>
+    <text x="710" y="95" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">BEBIDAS FRÍAS</text>
+    <rect x="650" y="120" width="120" height="300" fill="url(#glass)" stroke="#bae6fd" stroke-width="2" rx="4"/>
+    <line x1="710" y1="120" x2="710" y2="420" stroke="#bae6fd" stroke-width="3"/>
+    <!-- Drinks inside fridge -->
+    <rect x="660" y="140" width="14" height="45" fill="#dc2626" rx="2"/>
+    <rect x="680" y="140" width="14" height="45" fill="#dc2626" rx="2"/>
+    <rect x="720" y="140" width="14" height="45" fill="#15803d" rx="2"/>
+    <rect x="740" y="140" width="14" height="45" fill="#15803d" rx="2"/>
+    <rect x="660" y="210" width="18" height="55" fill="#16a34a" rx="3"/>
+    <rect x="685" y="210" width="18" height="55" fill="#16a34a" rx="3"/>
+    <rect x="720" y="210" width="18" height="55" fill="#eab308" rx="3"/>
+    <rect x="745" y="210" width="18" height="55" fill="#eab308" rx="3"/>
+
+    <!-- Glass Counter Showcase in Front (GlassCounterCase) -->
+    <rect x="120" y="240" width="380" height="220" fill="#64748b" rx="6"/>
+    <rect x="126" y="250" width="368" height="195" fill="url(#glass)" stroke="#e2e8f0" stroke-width="3" rx="4"/>
+    <!-- Glass shelf line -->
+    <line x1="126" y1="340" x2="494" y2="340" stroke="#bae6fd" stroke-width="4"/>
+    <!-- Items in Showcase -->
+    <rect x="145" y="270" width="32" height="45" fill="#a855f7" rx="3"/><text x="150" y="296" font-size="7" fill="#fff">DULCES</text>
+    <rect x="185" y="270" width="32" height="45" fill="#a855f7" rx="3"/>
+    <rect x="230" y="275" width="28" height="40" fill="#ef4444" rx="2"/>
+    <rect x="270" y="275" width="28" height="40" fill="#ef4444" rx="2"/>
+    <rect x="320" y="280" width="35" height="35" fill="#f59e0b" rx="2"/>
+    <rect x="370" y="280" width="35" height="35" fill="#f59e0b" rx="2"/>
+
+    <!-- Digital Scale on Counter Top -->
+    <rect x="150" y="205" width="70" height="35" fill="#f8fafc" rx="4" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="160" y="212" width="50" height="14" fill="#0f172a" rx="2"/>
+    <text x="185" y="223" font-size="9" fill="#22c55e" font-family="monospace" text-anchor="middle">1.450 KG</text>
+
+    <!-- Payment QR Plaque on Counter Top -->
+    <rect x="420" y="190" width="45" height="50" fill="#ffffff" rx="4" stroke="#0284c7" stroke-width="2"/>
+    <rect x="425" y="195" width="35" height="10" fill="#0284c7" rx="1"/>
+    <text x="442" y="203" font-size="6" fill="#fff" font-weight="bold" text-anchor="middle">PAGO QR</text>
+    <rect x="430" y="210" width="25" height="25" fill="#0f172a"/>
+    <rect x="433" y="213" width="8" height="8" fill="#fff"/>
+    <rect x="444" y="213" width="8" height="8" fill="#fff"/>
+    <rect x="433" y="224" width="8" height="8" fill="#fff"/>
+
+    <!-- Wire Snack Rack on Right (WireSnackRack) -->
+    <rect x="520" y="200" width="90" height="260" fill="none" stroke="#0284c7" stroke-width="4" rx="6"/>
+    <rect x="525" y="190" width="80" height="24" fill="#eab308" rx="3"/>
+    <text x="565" y="206" font-size="10" fill="#dc2626" font-weight="bold" text-anchor="middle">PAPITAS</text>
+    <!-- Tier 1 -->
+    <rect x="530" y="225" width="22" height="35" fill="#eab308" rx="3"/>
+    <rect x="556" y="225" width="22" height="35" fill="#ef4444" rx="3"/>
+    <rect x="582" y="225" width="22" height="35" fill="#3b82f6" rx="3"/>
+    <!-- Tier 2 -->
+    <rect x="530" y="280" width="22" height="35" fill="#16a34a" rx="3"/>
+    <rect x="556" y="280" width="22" height="35" fill="#ea580c" rx="3"/>
+    <rect x="582" y="280" width="22" height="35" fill="#a855f7" rx="3"/>
+    <!-- Tier 3 -->
+    <rect x="530" y="340" width="22" height="35" fill="#eab308" rx="3"/>
+    <rect x="556" y="340" width="22" height="35" fill="#ef4444" rx="3"/>
+    <rect x="582" y="340" width="22" height="35" fill="#16a34a" rx="3"/>
+
+    <!-- Produce / Bread Island on Left (ProduceIsland) -->
+    <polygon points="10,340 100,310 100,450 10,470" fill="#92400e"/>
+    <polygon points="10,340 100,310 115,315 25,345" fill="#b45309"/>
+    <text x="55" y="400" font-size="12" fill="#fff" font-weight="bold" transform="rotate(-15 55,400)">AREPAS &amp; PAN</text>
+  </svg>

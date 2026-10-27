@@ -6,6 +6,7 @@ import { CoolerUnit } from "./CoolerUnit";
 import { WallShelving } from "./WallShelving";
 import { ProduceIsland } from "./ProduceIsland";
 import { BackroomStorage } from "./BackroomStorage";
+import { CafeStation } from "./CafeStation";
 
 interface FixtureRendererProps {
   fixture: StoreFixture;
@@ -46,6 +47,8 @@ export function FixtureRenderer({
       return <ProduceIsland {...commonProps} />;
     case "backroom_storage":
       return <BackroomStorage {...commonProps} />;
+    case "cafe_station":
+      return <CafeStation {...commonProps} />;
     default:
       return null;
   }

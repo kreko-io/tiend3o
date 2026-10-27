@@ -128,6 +128,7 @@ export const StoreFixtureTypeSchema = z.enum([
   "cooler_unit",
   "wall_shelving",
   "backroom_storage",
+  "cafe_station",
 ]);
 export type StoreFixtureType = z.infer<typeof StoreFixtureTypeSchema>;
 

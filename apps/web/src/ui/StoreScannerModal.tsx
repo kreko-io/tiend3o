@@ -198,12 +198,11 @@ export function StoreScannerModal() {
             {/* Simulated Detection Canvas */}
             <div className="relative aspect-[16/10] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-inner flex items-center justify-center select-none">
               {/* Background Canvas Illustration */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-slate-950 via-slate-900 to-indigo-950/40 flex flex-col items-center justify-center p-4">
-                <Store className="w-24 h-24 text-slate-800/80" />
-                <span className="text-xs text-slate-500 font-medium mt-2">
-                  {currentPreset.photoTitle}
-                </span>
-              </div>
+              <img
+                src={uploadedImage || currentPreset.photoUrl}
+                alt={currentPreset.photoTitle}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
 
               {/* Animated Laser Scanning Sweep Line */}
               <div className="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_12px_#10b981] animate-pulse pointer-events-none" />

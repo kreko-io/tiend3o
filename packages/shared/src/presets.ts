@@ -59,7 +59,7 @@ export const PRESET_BODEGA_ESQUINA: StoreScanPreset = {
   description:
     "Típica bodega/abasto de barrio latinoamericano. Atención tras mostrador en L con vitrina exhibidora de vidrio, balanza digital, código QR de pago, estantería saturada a la pared y exhibidor de alambre para snacks.",
   photoTitle: "Foto de Escaneo: Mostrador y Estantería Bodega Central",
-  photoUrl: "/assets/scan_bodega.jpg",
+  photoUrl: "/assets/scan_bodega.svg",
   photoDimensions: { width: 800, height: 500 },
   detections: [
     {
@@ -317,6 +317,17 @@ export const PRESET_BODEGA_ESQUINA: StoreScanPreset = {
       ],
     });
 
+    // 8. Estación de Café & Espresso Bar
+    fixtures.push({
+      id: "fixture-cafe-station",
+      name: "Estación de Cafetería & Espresso Bar",
+      fixtureType: "cafe_station",
+      position: { x: 2.8, y: 0, z: -1.2 },
+      dimensions: { width: 2.0, height: 1.05, depth: 0.8 },
+      rotationY: 0,
+      shelves: [],
+    });
+
     return {
       id: "space-bodega-esquina",
       name: "Bodega / Abasto de Esquina",
@@ -346,7 +357,7 @@ export const PRESET_TIENDA_BARRIO: StoreScanPreset = {
   description:
     "Comercio de barrio con rejas metálicas de seguridad y venta al público exterior. Mostrador asomado a la fachada, exhibidor de paquetes en la acera y estantería profunda al fondo.",
   photoTitle: "Foto de Escaneo: Fachada Comercial con Reja y Vitrina",
-  photoUrl: "/assets/scan_fachada.jpg",
+  photoUrl: "/assets/scan_fachada.svg",
   photoDimensions: { width: 800, height: 500 },
   detections: [
     {
@@ -522,7 +533,7 @@ export const PRESET_SUPERMERCADO_MODERNO: StoreScanPreset = {
   description:
     "Distribución comercial moderna con islas de frescos en la entrada, pasillos centrales de góndolas para secos y limpieza, línea perimetral de frío, batería de cajas de cobro y trastienda con estibas de almacenaje.",
   photoTitle: "Foto de Escaneo: Pasillos y Frescos en Supermercado",
-  photoUrl: "/assets/scan_supermercado.jpg",
+  photoUrl: "/assets/scan_supermercado.svg",
   photoDimensions: { width: 800, height: 500 },
   detections: [
     {
@@ -662,6 +673,16 @@ export const PRESET_SUPERMERCADO_MODERNO: StoreScanPreset = {
         position: { x: 0, y: 0, z: -15.5 },
         dimensions: { width: 4.5, height: 2.8, depth: 1.2 },
         rotationY: 0,
+        shelves: [],
+      },
+      // Coffee & Espresso Station
+      {
+        id: "fixture-super-cafe-station",
+        name: "Estación de Cafetería & Espresso Bar",
+        fixtureType: "cafe_station",
+        position: { x: 7.5, y: 0, z: 6.5 },
+        dimensions: { width: 2.6, height: 1.05, depth: 0.85 },
+        rotationY: -Math.PI / 2,
         shelves: [],
       },
     ];
