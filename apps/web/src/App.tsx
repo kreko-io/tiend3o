@@ -8,12 +8,6 @@ import { ScanDiagnosticPanel } from "./ui/ScanDiagnosticPanel";
 import { usePlanogramStore } from "./store/usePlanogramStore";
 
 export function App() {
-  const { loadComparison } = usePlanogramStore();
-
-  useEffect(() => {
-    loadComparison();
-  }, [loadComparison]);
-
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-slate-950 select-none">
       <StoreNavbar />

@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import type { Product } from "@tiend3o/shared";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { usePlanogramStore } from "../store/usePlanogramStore";
@@ -30,7 +31,39 @@ export function StoreWorld() {
   const isSupermarket = space.format === "modern_supermarket";
 
   const productsMap = useMemo(() => {
-    return new Map(products.map((p) => [p.id, p]));
+    const map = new Map<string, Product>();
+    for (const p of products) {
+      map.set(p.id, p);
+    }
+    // Backward-compatibility alias map for fixtures and presets
+    const aliases: Record<string, string> = {
+      "prod-canned-01": "prod-tuna-can",
+      "prod-canned-02": "prod-tomato-sauce",
+      "prod-canned-03": "prod-pasta-spaghetti",
+      "prod-snacks-01": "prod-chips-salted",
+      "prod-snacks-02": "prod-pretzels",
+      "prod-snacks-03": "prod-chocolate-dark",
+      "prod-dairy-01": "prod-milk-whole",
+      "prod-dairy-02": "prod-milk-almond",
+      "prod-bev-01": "prod-soda-cola",
+      "prod-bev-02": "prod-beer-craft",
+      "prod-bev-03": "prod-juice-orange",
+      "prod-bakery-01": "prod-bread-artisan",
+      "prod-bakery-02": "prod-cookies-artisan",
+      "prod-bakery-03": "prod-cereal-oats",
+      "prod-cleaning-01": "prod-dish-soap",
+      "prod-cleaning-02": "prod-laundry-detergent",
+      "prod-cleaning-03": "prod-paper-towels",
+      "prod-personal-01": "prod-shampoo",
+      "prod-general-01": "prod-rice-jasmine",
+      "prod-general-02": "prod-charcoal-bag",
+      "prod-general-03": "prod-olive-oil",
+    };
+    for (const [alias, targetId] of Object.entries(aliases)) {
+      const target = map.get(targetId);
+      if (target) map.set(alias, target);
+    }
+    return map;
   }, [products]);
 
   // Compute 2D obstacle colliders for player walk mode
@@ -171,21 +204,18 @@ export function StoreWorld() {
         ))}
 
       {/* Standard Supermarket Gondolas (if present in layout) */}
-      {space.gondolas && space.gondolas.length > 0 && (
-        <StaticMerge>
-          {space.gondolas.map((gondola) => (
-            <AisleGondola
-              key={gondola.id}
-              gondola={gondola}
-              productsMap={productsMap}
-              selectedProductId={selectedProductId}
-              hoveredSlotId={hoveredSlotId}
-              onSelectProduct={selectProduct}
-              onSlotHover={hoverSlot}
-            />
-          ))}
-        </StaticMerge>
-      )}
+      {space.gondolas && space.gondolas.length > 0 &&
+        space.gondolas.map((gondola) => (
+          <AisleGondola
+            key={gondola.id}
+            gondola={gondola}
+            productsMap={productsMap}
+            selectedProductId={selectedProductId}
+            hoveredSlotId={hoveredSlotId}
+            onSelectProduct={selectProduct}
+            onSlotHover={hoverSlot}
+          />
+        ))}
 
       {/* Modern Supermarket Context Elements (Only in Modern Supermarket Format) */}
       {isSupermarket && (

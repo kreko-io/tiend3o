@@ -155,61 +155,64 @@ export function StoreNavbar() {
 
       {/* View Mode Switcher & Controls */}
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700">
+        <div className="flex items-center gap-1 bg-slate-950/70 p-1 rounded-xl border border-slate-700/80 shadow-inner">
           <button
             onClick={() => setViewMode("isometric")}
-            className={`p-1.5 rounded-lg transition ${
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${
               viewMode === "isometric"
-                ? "bg-sky-500/20 text-sky-400"
+                ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
                 : "text-slate-400 hover:text-slate-200"
             }`}
             title="Vista Maqueta Isométrica Cutaway (45°)"
           >
-            <Boxes className="w-4 h-4" />
+            <Boxes className="w-3.5 h-3.5" />
+            <span className="hidden xl:inline">Isométrica</span>
           </button>
           <button
             onClick={() => setViewMode("counter")}
-            className={`p-1.5 rounded-lg transition ${
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${
               viewMode === "counter"
-                ? "bg-sky-500/20 text-sky-400"
+                ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
                 : "text-slate-400 hover:text-slate-200"
             }`}
-            title="Vista Cliente en Mostrador / Pago QR (1.65m)"
+            title="Vista Primer Plano en Mostrador / Atención al Cliente"
           >
-            <UserCheck className="w-4 h-4" />
+            <UserCheck className="w-3.5 h-3.5" />
+            <span className="hidden xl:inline">Mostrador</span>
+          </button>
+          <button
+            onClick={() => setViewMode("walk")}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${
+              viewMode === "walk"
+                ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+            title="Modo Comprador / Recorrido en Primera Persona (WASD)"
+          >
+            <Footprints className="w-3.5 h-3.5" />
+            <span className="hidden xl:inline">Caminar</span>
           </button>
           <button
             onClick={() => setViewMode("orbit")}
             className={`p-1.5 rounded-lg transition ${
               viewMode === "orbit"
-                ? "bg-sky-500/20 text-sky-400"
+                ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
                 : "text-slate-400 hover:text-slate-200"
             }`}
-            title="Vista Orbital 3D"
+            title="Vista Orbital Libre 3D"
           >
-            <Camera className="w-4 h-4" />
+            <Camera className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setViewMode("topdown")}
             className={`p-1.5 rounded-lg transition ${
               viewMode === "topdown"
-                ? "bg-sky-500/20 text-sky-400"
+                ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
                 : "text-slate-400 hover:text-slate-200"
             }`}
             title="Planta Superior 2D"
           >
-            <Eye className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setViewMode("walk")}
-            className={`p-1.5 rounded-lg transition ${
-              viewMode === "walk"
-                ? "bg-sky-500/20 text-sky-400"
-                : "text-slate-400 hover:text-slate-200"
-            }`}
-            title="Modo Comprador / Recorrido en Primera Persona (WASD)"
-          >
-            <Footprints className="w-4 h-4" />
+            <Eye className="w-3.5 h-3.5" />
           </button>
         </div>
 

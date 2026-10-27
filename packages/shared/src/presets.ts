@@ -186,20 +186,20 @@ export const PRESET_BODEGA_ESQUINA: StoreScanPreset = {
       shelves: isOptimized
         ? [
             // Level 0 (Piso): Servilletas, bolsas
-            createShelf(0, 0.25, ["prod-cleaning-03", "prod-cleaning-03", "prod-general-01"]),
+            createShelf(0, 0.25, ["prod-paper-towels", "prod-paper-towels", "prod-rice-jasmine"]),
             // Level 1 (Nivel Ojos en Vitrina frente a QR): Atún, Chocolates, Afeitadoras (Alto margen)
             createShelf(1, 0.65, [
-              "prod-canned-01",
-              "prod-canned-01",
-              "prod-snacks-03",
-              "prod-snacks-03",
-              "prod-personal-01",
+              "prod-tuna-can",
+              "prod-tuna-can",
+              "prod-chocolate-dark",
+              "prod-chocolate-dark",
+              "prod-shampoo",
             ]),
           ]
         : [
             // As-Is: Chocolates abajo ocultos, servilletas arriba
-            createShelf(0, 0.25, ["prod-snacks-03", "prod-personal-01", "prod-canned-01"]),
-            createShelf(1, 0.65, ["prod-cleaning-03", "prod-cleaning-03", "prod-general-01"]),
+            createShelf(0, 0.25, ["prod-chocolate-dark", "prod-shampoo", "prod-tuna-can"]),
+            createShelf(1, 0.65, ["prod-paper-towels", "prod-paper-towels", "prod-rice-jasmine"]),
           ],
     });
 
@@ -213,8 +213,8 @@ export const PRESET_BODEGA_ESQUINA: StoreScanPreset = {
       rotationY: Math.PI / 2,
       metadata: { hasScale: false, hasQr: false },
       shelves: [
-        createShelf(0, 0.25, ["prod-canned-02", "prod-canned-02"]),
-        createShelf(1, 0.65, ["prod-bakery-02", "prod-bakery-02"]),
+        createShelf(0, 0.25, ["prod-tomato-sauce", "prod-tomato-sauce"]),
+        createShelf(1, 0.65, ["prod-cookies-artisan", "prod-cookies-artisan"]),
       ],
     });
 
@@ -229,9 +229,9 @@ export const PRESET_BODEGA_ESQUINA: StoreScanPreset = {
       rotationY: isOptimized ? -Math.PI / 8 : 0,
       metadata: { frameColor: "#0284c7" },
       shelves: [
-        createShelf(0, 0.35, ["prod-snacks-02", "prod-snacks-02"]), // Platanitos
-        createShelf(1, 0.75, ["prod-snacks-01", "prod-snacks-01"]), // Papas gourmet
-        createShelf(2, 1.15, ["prod-snacks-01", "prod-snacks-02"]), // Mix
+        createShelf(0, 0.35, ["prod-pretzels", "prod-pretzels"]),
+        createShelf(1, 0.75, ["prod-chips-salted", "prod-chips-salted"]),
+        createShelf(2, 1.15, ["prod-chips-salted", "prod-pretzels"]),
       ],
     });
 
@@ -247,27 +247,27 @@ export const PRESET_BODEGA_ESQUINA: StoreScanPreset = {
         ? [
             // Level 0 (Piso): Galones pesados de Aceite 5L y Harina
             createShelf(0, 0.15, [
-              "prod-general-03", // Aceite 5L
-              "prod-general-03",
-              "prod-bakery-03", // Harina
-              "prod-bakery-03",
+              "prod-olive-oil",
+              "prod-olive-oil",
+              "prod-cereal-oats",
+              "prod-cereal-oats",
             ]),
             // Level 1: Café molido y Leche condensada
-            createShelf(1, 0.85, ["prod-dairy-02", "prod-dairy-02", "prod-bakery-01", "prod-bakery-01"]),
+            createShelf(1, 0.85, ["prod-milk-almond", "prod-milk-almond", "prod-bread-artisan", "prod-bread-artisan"]),
             // Level 2 (Nivel Ojos): Salsas, Conservas, Licores
-            createShelf(2, 1.55, ["prod-canned-03", "prod-canned-03", "prod-bev-02", "prod-bev-02"]),
+            createShelf(2, 1.55, ["prod-pasta-spaghetti", "prod-pasta-spaghetti", "prod-beer-craft", "prod-beer-craft"]),
             // Level 3 (Tope liviano): Fósforos, servilletas
-            createShelf(3, 2.25, ["prod-cleaning-01", "prod-cleaning-01"]),
+            createShelf(3, 2.25, ["prod-dish-soap", "prod-dish-soap"]),
           ]
         : [
             // As-Is (Infracción ergonómica): Aceite pesado arriba, papel abajo
-            createShelf(0, 0.15, ["prod-cleaning-01", "prod-cleaning-01", "prod-dairy-02"]),
-            createShelf(1, 0.85, ["prod-canned-03", "prod-bakery-01"]),
-            createShelf(2, 1.55, ["prod-bev-02", "prod-canned-02"]),
+            createShelf(0, 0.15, ["prod-dish-soap", "prod-dish-soap", "prod-milk-almond"]),
+            createShelf(1, 0.85, ["prod-pasta-spaghetti", "prod-bread-artisan"]),
+            createShelf(2, 1.55, ["prod-beer-craft", "prod-tomato-sauce"]),
             createShelf(3, 2.25, [
-              "prod-general-03", // ¡Aceite pesado arriba!
-              "prod-general-03",
-              "prod-bakery-03",
+              "prod-olive-oil",
+              "prod-olive-oil",
+              "prod-cereal-oats",
             ]),
           ],
     });
@@ -282,10 +282,10 @@ export const PRESET_BODEGA_ESQUINA: StoreScanPreset = {
       rotationY: Math.PI / 2,
       metadata: { isRefrigerated: true, lightColor: "#38bdf8" },
       shelves: [
-        createShelf(0, 0.25, ["prod-bev-01", "prod-bev-01", "prod-bev-03"]), // Gaseosa 2L
-        createShelf(1, 0.75, ["prod-bev-02", "prod-bev-02", "prod-bev-02"]), // Cerveza artesanal fría
-        createShelf(2, 1.25, ["prod-dairy-01", "prod-dairy-01"]), // Leche fresca
-        createShelf(3, 1.75, ["prod-bev-03", "prod-bev-03"]), // Jugos
+        createShelf(0, 0.25, ["prod-soda-cola", "prod-soda-cola", "prod-juice-orange"]),
+        createShelf(1, 0.75, ["prod-beer-craft", "prod-beer-craft", "prod-beer-craft"]),
+        createShelf(2, 1.25, ["prod-milk-whole", "prod-milk-whole"]),
+        createShelf(3, 1.75, ["prod-juice-orange", "prod-juice-orange"]),
       ],
     });
 
@@ -298,8 +298,8 @@ export const PRESET_BODEGA_ESQUINA: StoreScanPreset = {
       dimensions: { width: 1.4, height: 1.1, depth: 0.9 },
       rotationY: -Math.PI / 6,
       shelves: [
-        createShelf(0, 0.35, ["prod-bakery-01", "prod-bakery-01"]),
-        createShelf(1, 0.75, ["prod-bakery-02", "prod-bakery-02"]),
+        createShelf(0, 0.35, ["prod-bread-artisan", "prod-bread-artisan"]),
+        createShelf(1, 0.75, ["prod-cookies-artisan", "prod-cookies-artisan"]),
       ],
     });
 
@@ -312,8 +312,8 @@ export const PRESET_BODEGA_ESQUINA: StoreScanPreset = {
       dimensions: { width: 2.0, height: 2.4, depth: 0.8 },
       rotationY: 0,
       shelves: [
-        createShelf(0, 0.2, ["prod-cleaning-02", "prod-cleaning-02"]),
-        createShelf(1, 1.1, ["prod-general-02", "prod-general-02"]),
+        createShelf(0, 0.2, ["prod-laundry-detergent", "prod-laundry-detergent"]),
+        createShelf(1, 1.1, ["prod-charcoal-bag", "prod-charcoal-bag"]),
       ],
     });
 
@@ -459,8 +459,8 @@ export const PRESET_TIENDA_BARRIO: StoreScanPreset = {
         rotationY: 0,
         metadata: { hasQr: true, hasScale: true, isGrilleWindow: true },
         shelves: [
-          createShelf(0, 0.25, ["prod-canned-01", "prod-canned-02"]),
-          createShelf(1, 0.65, isOptimized ? ["prod-snacks-03", "prod-snacks-01"] : ["prod-cleaning-01"]),
+          createShelf(0, 0.25, ["prod-tuna-can", "prod-tomato-sauce"]),
+          createShelf(1, 0.65, isOptimized ? ["prod-chocolate-dark", "prod-chips-salted"] : ["prod-dish-soap"]),
         ],
       },
       {
@@ -471,9 +471,9 @@ export const PRESET_TIENDA_BARRIO: StoreScanPreset = {
         dimensions: { width: 0.65, height: 1.65, depth: 0.45 },
         rotationY: Math.PI / 6,
         shelves: [
-          createShelf(0, 0.35, ["prod-snacks-01", "prod-snacks-01"]),
-          createShelf(1, 0.75, ["prod-snacks-02", "prod-snacks-02"]),
-          createShelf(2, 1.15, ["prod-snacks-03", "prod-snacks-03"]),
+          createShelf(0, 0.35, ["prod-chips-salted", "prod-chips-salted"]),
+          createShelf(1, 0.75, ["prod-pretzels", "prod-pretzels"]),
+          createShelf(2, 1.15, ["prod-chocolate-dark", "prod-chocolate-dark"]),
         ],
       },
       {
@@ -484,10 +484,10 @@ export const PRESET_TIENDA_BARRIO: StoreScanPreset = {
         dimensions: { width: 6.0, height: 2.8, depth: 0.5 },
         rotationY: 0,
         shelves: [
-          createShelf(0, 0.15, ["prod-general-03", "prod-bakery-03"]),
-          createShelf(1, 0.85, ["prod-dairy-02", "prod-canned-03"]),
-          createShelf(2, 1.55, ["prod-bev-02", "prod-bakery-01"]),
-          createShelf(3, 2.25, ["prod-cleaning-02", "prod-cleaning-03"]),
+          createShelf(0, 0.15, ["prod-olive-oil", "prod-cereal-oats"]),
+          createShelf(1, 0.85, ["prod-milk-almond", "prod-pasta-spaghetti"]),
+          createShelf(2, 1.55, ["prod-beer-craft", "prod-bread-artisan"]),
+          createShelf(3, 2.25, ["prod-laundry-detergent", "prod-paper-towels"]),
         ],
       },
       {
@@ -498,8 +498,8 @@ export const PRESET_TIENDA_BARRIO: StoreScanPreset = {
         dimensions: { width: 1.6, height: 1.8, depth: 0.75 },
         rotationY: -Math.PI / 4,
         shelves: [
-          createShelf(0, 0.25, ["prod-bev-01", "prod-bev-03"]),
-          createShelf(1, 0.75, ["prod-bev-02", "prod-dairy-01"]),
+          createShelf(0, 0.25, ["prod-soda-cola", "prod-juice-orange"]),
+          createShelf(1, 0.75, ["prod-beer-craft", "prod-milk-whole"]),
         ],
       },
     ];
@@ -647,8 +647,8 @@ export const PRESET_SUPERMERCADO_MODERNO: StoreScanPreset = {
         dimensions: { width: 2.2, height: 1.1, depth: 1.4 },
         rotationY: 0,
         shelves: [
-          createShelf(0, 0.35, ["prod-bakery-01", "prod-bakery-01"]),
-          createShelf(1, 0.75, ["prod-bakery-02", "prod-bakery-02"]),
+          createShelf(0, 0.35, ["prod-bread-artisan", "prod-bread-artisan"]),
+          createShelf(1, 0.75, ["prod-cookies-artisan", "prod-cookies-artisan"]),
         ],
       },
       // Perimeter beverage reach-in coolers
@@ -661,8 +661,8 @@ export const PRESET_SUPERMERCADO_MODERNO: StoreScanPreset = {
         rotationY: Math.PI / 2,
         metadata: { isRefrigerated: true },
         shelves: [
-          createShelf(0, 0.25, ["prod-bev-01", "prod-bev-01"]),
-          createShelf(1, 0.75, ["prod-bev-02", "prod-bev-02"]),
+          createShelf(0, 0.25, ["prod-soda-cola", "prod-soda-cola"]),
+          createShelf(1, 0.75, ["prod-beer-craft", "prod-beer-craft"]),
         ],
       },
       // Backroom storage pallets & racks
