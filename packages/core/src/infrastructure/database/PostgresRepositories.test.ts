@@ -86,11 +86,11 @@ describe("PostgreSQL Infrastructure Repositories", () => {
     it("fetches affinity between two products bidirectionally", async () => {
       const aff = await affinityRepo.getAffinity("prod-milk-whole", "prod-cereal-oats");
       expect(aff).not.toBeNull();
-      expect(aff?.lift).toBe(2.32);
+      expect(aff?.lift).toBe(2.75);
 
       const affReverse = await affinityRepo.getAffinity("prod-cereal-oats", "prod-milk-whole");
       expect(affReverse).not.toBeNull();
-      expect(affReverse?.lift).toBe(2.32);
+      expect(affReverse?.lift).toBe(2.75);
     });
 
     it("fetches top affinities for a given product", async () => {

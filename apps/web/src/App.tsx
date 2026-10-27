@@ -6,11 +6,11 @@ import { AIRecommendationModal } from "./ui/AIRecommendationModal";
 import { usePlanogramStore } from "./store/usePlanogramStore";
 
 export function App() {
-  const { loadPlanogram } = usePlanogramStore();
+  const { loadComparison } = usePlanogramStore();
 
   useEffect(() => {
-    loadPlanogram();
-  }, [loadPlanogram]);
+    loadComparison();
+  }, [loadComparison]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-slate-950 select-none">

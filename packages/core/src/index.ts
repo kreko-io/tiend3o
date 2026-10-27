@@ -13,9 +13,11 @@ export * from "./domain/repositories/IAffinityRepository";
 export * from "./application/dtos/PlanogramDTO";
 export * from "./application/ports/IPlanogramOptimizerPort";
 export * from "./application/use-cases/GeneratePlanogramUseCase";
+export * from "./application/use-cases/OptimizeStoreLayoutUseCase";
 
 // Infrastructure
 export * from "./infrastructure/repositories/InMemoryProductRepository";
 export * from "./infrastructure/repositories/InMemoryStoreLayoutRepository";
 export * from "./infrastructure/repositories/InMemoryAffinityRepository";
 export * from "./infrastructure/engine/HeuristicPlanogramOptimizer";
+export * from "./infrastructure/engine/SuboptimalPlanogramGenerator";

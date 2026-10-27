@@ -34,6 +34,7 @@ export const ProductSchema = z.object({
   name: z.string(),
   category: ProductCategorySchema,
   dimensions: Dimensions3DSchema, // in meters (e.g. milk carton: 0.08 x 0.22 x 0.08)
+  weightKg: z.number().nonnegative().default(0.5), // weight in kg for ergonomics & shelf stability
   price: z.number().positive(),
   margin: z.number().min(0).max(1),
   historicalSalesVelocity: z.number().nonnegative(), // units/day from 10-year data
@@ -109,5 +110,19 @@ export const PlanogramKPIsSchema = z.object({
   spaceUtilizationRate: z.number().min(0).max(1),
   affinityAlignmentScore: z.number().min(0).max(100),
   eyeLevelRevenuePotential: z.number().nonnegative(),
+  hotZoneUtilizationRate: z.number().min(0).max(1).default(0), // % of high-margin items in levels 1 & 2
+  ergonomicViolationsCount: z.number().int().nonnegative().default(0), // heavy items on high levels
+  highLiftPairsAdjacent: z.number().int().nonnegative().default(0), // high-lift pairs placed close
+  totalHighLiftPairs: z.number().int().nonnegative().default(0),
+  revenuePerLinearMeter: z.number().nonnegative().default(0),
 });
 export type PlanogramKPIs = z.infer<typeof PlanogramKPIsSchema>;
+
+export interface PlanogramComparison {
+  beforeKPIs: PlanogramKPIs;
+  afterKPIs: PlanogramKPIs;
+  revenueImprovementPct: number;
+  ergonomicViolationsResolved: number;
+  affinityCoverageImprovementPct: number;
+  executiveSummary: string[];
+}

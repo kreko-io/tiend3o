@@ -6,6 +6,7 @@ export interface ProductProps {
   name: string;
   category: ProductCategory;
   dimensions: Dimensions3D;
+  weightKg?: number;
   price: number;
   margin: number;
   historicalSalesVelocity: number;
@@ -19,6 +20,7 @@ export class ProductEntity {
   toDTO() {
     return {
       ...this.props,
+      weightKg: this.weightKg,
       color: this.color,
     };
   }
@@ -43,6 +45,14 @@ export class ProductEntity {
     return this.props.dimensions;
   }
 
+  get weightKg(): number {
+    return this.props.weightKg ?? 0.5;
+  }
+
+  get isHeavy(): boolean {
+    return this.weightKg >= 2.0;
+  }
+
   get price(): number {
     return this.props.price;
   }
@@ -65,6 +75,7 @@ export class ProductEntity {
 
   /**
    * Eye-level priority score based on profit margin * historical transaction frequency.
+   * Score = margin * price * velocity.
    */
   calculatePlacementPriority(): number {
     return this.props.margin * this.props.price * this.props.historicalSalesVelocity;

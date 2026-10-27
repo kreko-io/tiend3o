@@ -16,3 +16,15 @@ export interface PlanogramResponseDTO {
   products: Product[];
   kpis: PlanogramKPIs;
 }
+
+export interface OptimizeStoreLayoutResponseDTO {
+  suboptimalLayout: StoreSpace;
+  optimizedLayout: StoreSpace;
+  products: Product[];
+  beforeKPIs: PlanogramKPIs;
+  afterKPIs: PlanogramKPIs;
+  revenueImprovementPct: number;
+  ergonomicViolationsResolved: number;
+  affinityCoverageImprovementPct: number;
+  executiveSummary: string[];
+}

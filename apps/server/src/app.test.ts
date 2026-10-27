@@ -27,6 +27,19 @@ describe("Server API Integration", () => {
     expect(res.body.kpis).toBeDefined();
   });
 
+  it("compares suboptimal vs optimized planograms with executive metrics", async () => {
+    const res = await request(app)
+      .post("/api/planogram/optimize")
+      .send({ storeWidth: 20, storeLength: 30 });
+    expect(res.status).toBe(200);
+    expect(res.body.suboptimalLayout).toBeDefined();
+    expect(res.body.optimizedLayout).toBeDefined();
+    expect(res.body.beforeKPIs).toBeDefined();
+    expect(res.body.afterKPIs).toBeDefined();
+    expect(res.body.revenueImprovementPct).toBeGreaterThanOrEqual(0);
+    expect(res.body.executiveSummary.length).toBeGreaterThan(0);
+  });
+
   it("returns 10-year historical affinities", async () => {
     const res = await request(app).get("/api/inference/affinities");
     expect(res.status).toBe(200);

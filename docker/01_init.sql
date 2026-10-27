@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS products (
     width_m NUMERIC(6,3) NOT NULL,
     height_m NUMERIC(6,3) NOT NULL,
     depth_m NUMERIC(6,3) NOT NULL,
+    weight_kg NUMERIC(6,3) NOT NULL DEFAULT 0.500,
     price NUMERIC(10,2) NOT NULL CHECK (price > 0),
     margin NUMERIC(5,4) NOT NULL CHECK (margin >= 0 AND margin <= 1),
     historical_sales_velocity NUMERIC(10,2) NOT NULL CHECK (historical_sales_velocity >= 0),

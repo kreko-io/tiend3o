@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import type { Product } from "@tiend3o/shared";
+import { usePlanogramStore } from "../store/usePlanogramStore";
 
 interface ProductItemProps {
   product: Product;
@@ -18,9 +19,27 @@ export function ProductItem({
   isHovered = false,
   onClick,
 }: ProductItemProps) {
+  const { overlayMode } = usePlanogramStore();
   const { width, height, depth } = product.dimensions;
 
   const outlineColor = isSelected ? "#38bdf8" : isHovered ? "#facc15" : null;
+
+  // Calculate financial score: margin * price * sales velocity
+  const financialScore = product.price * product.margin * product.historicalSalesVelocity;
+
+  // Compute active color (Realistic vs Heatmap)
+  const { activeColor, emissiveColor, emissiveIntensity } = useMemo(() => {
+    if (overlayMode === "heatmap") {
+      if (financialScore >= 55) {
+        return { activeColor: "#22c55e", emissiveColor: "#15803d", emissiveIntensity: 0.4 }; // Hot/Green
+      } else if (financialScore >= 22) {
+        return { activeColor: "#eab308", emissiveColor: "#a16207", emissiveIntensity: 0.25 }; // Warm/Amber
+      } else {
+        return { activeColor: "#ef4444", emissiveColor: "#b91c1c", emissiveIntensity: 0.25 }; // Cold/Red
+      }
+    }
+    return { activeColor: product.color, emissiveColor: "#000000", emissiveIntensity: 0 };
+  }, [overlayMode, financialScore, product.color]);
 
   // Render individual product shape depending on category
   const renderShape = (key: string, offsetZ: number) => {
@@ -28,19 +47,19 @@ export function ProductItem({
       case "dairy": // Milk carton
         return (
           <group key={key} position={[0, height / 2, offsetZ]}>
-            {/* Main carton body */}
             <mesh castShadow receiveShadow>
               <boxGeometry args={[width, height * 0.8, depth]} />
               <meshStandardMaterial
-                color={product.color}
+                color={activeColor}
+                emissive={emissiveColor}
+                emissiveIntensity={emissiveIntensity}
                 roughness={0.4}
                 metalness={0.1}
               />
             </mesh>
-            {/* Sloped top crest */}
             <mesh position={[0, height * 0.45, 0]}>
               <boxGeometry args={[width * 0.95, height * 0.15, depth * 0.6]} />
-              <meshStandardMaterial color="#ffffff" roughness={0.5} />
+              <meshStandardMaterial color={overlayMode === "heatmap" ? activeColor : "#ffffff"} roughness={0.5} />
             </mesh>
           </group>
         );
@@ -51,15 +70,16 @@ export function ProductItem({
             <mesh castShadow receiveShadow>
               <cylinderGeometry args={[width / 2, width / 2, height, 16]} />
               <meshStandardMaterial
-                color={product.color}
+                color={activeColor}
+                emissive={emissiveColor}
+                emissiveIntensity={emissiveIntensity}
                 metalness={0.3}
                 roughness={0.2}
               />
             </mesh>
-            {/* Bottle cap */}
             <mesh position={[0, height / 2 + 0.01, 0]}>
               <cylinderGeometry args={[width / 3.5, width / 3.5, 0.02, 12]} />
-              <meshStandardMaterial color="#ffffff" />
+              <meshStandardMaterial color={overlayMode === "heatmap" ? activeColor : "#ffffff"} />
             </mesh>
           </group>
         );
@@ -70,7 +90,9 @@ export function ProductItem({
             <mesh castShadow receiveShadow>
               <cylinderGeometry args={[width / 2, width / 2, height, 16]} />
               <meshStandardMaterial
-                color={product.color}
+                color={activeColor}
+                emissive={emissiveColor}
+                emissiveIntensity={emissiveIntensity}
                 metalness={0.7}
                 roughness={0.3}
               />
@@ -88,7 +110,9 @@ export function ProductItem({
           >
             <boxGeometry args={[width, height, depth]} />
             <meshStandardMaterial
-              color={product.color}
+              color={activeColor}
+              emissive={emissiveColor}
+              emissiveIntensity={emissiveIntensity}
               roughness={0.5}
               metalness={0.1}
             />
@@ -104,7 +128,7 @@ export function ProductItem({
       items.push(renderShape(`facing-${f}`, -f * step));
     }
     return items;
-  }, [facingCount, product, depth]);
+  }, [facingCount, product, depth, activeColor, emissiveColor, emissiveIntensity]);
 
   return (
     <group

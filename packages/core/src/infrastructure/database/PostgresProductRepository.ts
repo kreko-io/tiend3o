@@ -11,6 +11,7 @@ interface ProductRow {
   width_m: string | number;
   height_m: string | number;
   depth_m: string | number;
+  weight_kg?: string | number;
   price: string | number;
   margin: string | number;
   historical_sales_velocity: string | number;
@@ -32,6 +33,7 @@ export class PostgresProductRepository implements IProductRepository {
         height: Number(row.height_m),
         depth: Number(row.depth_m),
       },
+      weightKg: row.weight_kg !== undefined ? Number(row.weight_kg) : 0.5,
       price: Number(row.price),
       margin: Number(row.margin),
       historicalSalesVelocity: Number(row.historical_sales_velocity),
@@ -44,6 +46,7 @@ export class PostgresProductRepository implements IProductRepository {
   async findById(id: string): Promise<ProductEntity | null> {
     const sql = `
       SELECT id, sku, name, category, width_m, height_m, depth_m,
+             COALESCE(weight_kg, 0.5) as weight_kg,
              price, margin, historical_sales_velocity, model_url, color
       FROM products
       WHERE id = $1
@@ -56,6 +59,7 @@ export class PostgresProductRepository implements IProductRepository {
   async findAll(): Promise<ProductEntity[]> {
     const sql = `
       SELECT id, sku, name, category, width_m, height_m, depth_m,
+             COALESCE(weight_kg, 0.5) as weight_kg,
              price, margin, historical_sales_velocity, model_url, color
       FROM products
       ORDER BY category ASC, name ASC
@@ -67,6 +71,7 @@ export class PostgresProductRepository implements IProductRepository {
   async findByCategory(category: string): Promise<ProductEntity[]> {
     const sql = `
       SELECT id, sku, name, category, width_m, height_m, depth_m,
+             COALESCE(weight_kg, 0.5) as weight_kg,
              price, margin, historical_sales_velocity, model_url, color
       FROM products
       WHERE category = $1
@@ -77,13 +82,13 @@ export class PostgresProductRepository implements IProductRepository {
   }
 
   async save(product: ProductEntity): Promise<void> {
-    const { id, sku, name, category, dimensions, price, margin, historicalSalesVelocity, modelUrl, color } = product.props;
+    const { id, sku, name, category, dimensions, weightKg, price, margin, historicalSalesVelocity, modelUrl, color } = product.props;
     const sql = `
       INSERT INTO products (
-        id, sku, name, category, width_m, height_m, depth_m,
+        id, sku, name, category, width_m, height_m, depth_m, weight_kg,
         price, margin, historical_sales_velocity, model_url, color, updated_at
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
       ON CONFLICT (id) DO UPDATE SET
         sku = EXCLUDED.sku,
         name = EXCLUDED.name,
@@ -91,6 +96,7 @@ export class PostgresProductRepository implements IProductRepository {
         width_m = EXCLUDED.width_m,
         height_m = EXCLUDED.height_m,
         depth_m = EXCLUDED.depth_m,
+        weight_kg = EXCLUDED.weight_kg,
         price = EXCLUDED.price,
         margin = EXCLUDED.margin,
         historical_sales_velocity = EXCLUDED.historical_sales_velocity,
@@ -106,6 +112,7 @@ export class PostgresProductRepository implements IProductRepository {
       dimensions.width,
       dimensions.height,
       dimensions.depth,
+      weightKg ?? 0.5,
       price,
       margin,
       historicalSalesVelocity,

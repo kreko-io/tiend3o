@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import {
   GeneratePlanogramUseCase,
+  OptimizeStoreLayoutUseCase,
   InMemoryProductRepository,
   InMemoryStoreLayoutRepository,
   InMemoryAffinityRepository,
@@ -55,6 +56,7 @@ export function createApp(deps: AppDependencies = {}) {
 
   const optimizer = new HeuristicPlanogramOptimizer();
   const generatePlanogramUseCase = new GeneratePlanogramUseCase(storeRepo, productRepo, optimizer);
+  const optimizeStoreLayoutUseCase = new OptimizeStoreLayoutUseCase(storeRepo, productRepo, affinityRepo);
 
   const inferenceEngine = new HistoricalInferenceEngine();
   const aiClient = new AnthropicLayoutClient();
@@ -145,6 +147,28 @@ export function createApp(deps: AppDependencies = {}) {
       res.json(result.data);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
+  });
+
+  app.post("/api/planogram/optimize", async (req, res) => {
+    try {
+      const { storeWidth, storeLength, aisleWidth, bayCount } = req.body;
+      const result = await optimizeStoreLayoutUseCase.execute({
+        storeWidth: storeWidth ? Number(storeWidth) : undefined,
+        storeLength: storeLength ? Number(storeLength) : undefined,
+        aisleWidth: aisleWidth ? Number(aisleWidth) : undefined,
+        bayCount: bayCount ? Number(bayCount) : undefined,
+      });
+
+      if (!result.success) {
+        res.status(400).json({ error: result.error.message, code: result.error.code });
+        return;
+      }
+
+      res.json(result.data);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Optimization error";
       res.status(500).json({ error: message });
     }
   });

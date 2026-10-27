@@ -6,6 +6,7 @@ import { StoreFloor } from "./StoreFloor";
 import { AisleGondola } from "./AisleGondola";
 import { Player } from "./Player";
 import { StaticMerge } from "./StaticMerge";
+import { LiftArcsOverlay } from "./LiftArcsOverlay";
 import { BoundingBox2D } from "./walk";
 
 export function StoreWorld() {
@@ -72,6 +73,8 @@ export function StoreWorld() {
       />
 
       <StoreFloor space={space} />
+
+      <LiftArcsOverlay />
 
       <StaticMerge>
         {space.gondolas.map((gondola) => (
