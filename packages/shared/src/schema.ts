@@ -82,9 +82,87 @@ export const GondolaAisleSchema = z.object({
 });
 export type GondolaAisle = z.infer<typeof GondolaAisleSchema>;
 
+export const StoreFormatSchema = z.enum([
+  "modern_supermarket",
+  "corner_bodega",
+  "neighborhood_store",
+]);
+export type StoreFormat = z.infer<typeof StoreFormatSchema>;
+
+export const FloorZoneMaterialSchema = z.enum([
+  "tiles",
+  "wood",
+  "concrete",
+  "carpet",
+  "brick",
+  "terrazzo",
+]);
+export type FloorZoneMaterial = z.infer<typeof FloorZoneMaterialSchema>;
+
+export const FloorZoneSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  zoneType: z.enum([
+    "retail_sales",
+    "checkout_counter",
+    "backroom_storage",
+    "entrance_porch",
+    "bakery_cafe",
+    "produce_area",
+  ]),
+  minX: z.number(),
+  maxX: z.number(),
+  minZ: z.number(),
+  maxZ: z.number(),
+  material: FloorZoneMaterialSchema.default("tiles"),
+  color: z.string().default("#f1f5f9"),
+});
+export type FloorZone = z.infer<typeof FloorZoneSchema>;
+
+export const StoreFixtureTypeSchema = z.enum([
+  "gondola",
+  "glass_counter_case",
+  "wire_snack_rack",
+  "hanging_strip",
+  "produce_island",
+  "cooler_unit",
+  "wall_shelving",
+  "backroom_storage",
+]);
+export type StoreFixtureType = z.infer<typeof StoreFixtureTypeSchema>;
+
+export const StoreFixtureSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  fixtureType: StoreFixtureTypeSchema,
+  position: Position3DSchema,
+  dimensions: Dimensions3DSchema,
+  rotationY: z.number().default(0), // in radians
+  shelves: z.array(ShelfLevelSchema).default([]),
+  metadata: z.record(z.any()).optional(),
+});
+export type StoreFixture = z.infer<typeof StoreFixtureSchema>;
+
+export const ScanDetectionSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  fixtureType: StoreFixtureTypeSchema,
+  confidence: z.number().min(0).max(1),
+  bbox: z.object({
+    x: z.number(),
+    y: z.number(),
+    width: z.number(),
+    height: z.number(),
+  }),
+  color: z.string().default("#22c55e"),
+  skusDetected: z.number().int().nonnegative().default(0),
+});
+export type ScanDetection = z.infer<typeof ScanDetectionSchema>;
+
 export const StoreSpaceSchema = z.object({
   id: z.string(),
   name: z.string(),
+  format: StoreFormatSchema.optional().default("modern_supermarket"),
   width: z.number().positive(), // in meters, e.g. 20m
   length: z.number().positive(), // in meters, e.g. 35m
   ceilingHeight: z.number().positive().default(4.0),
@@ -92,6 +170,8 @@ export const StoreSpaceSchema = z.object({
   checkoutPosition: Position3DSchema.default({ x: 5, y: 0, z: 0 }),
   aisleWidth: z.number().positive().default(2.2), // standard 2.2m walkway
   gondolas: z.array(GondolaAisleSchema),
+  fixtures: z.array(StoreFixtureSchema).optional().default([]),
+  zones: z.array(FloorZoneSchema).optional().default([]),
 });
 export type StoreSpace = z.infer<typeof StoreSpaceSchema>;
 

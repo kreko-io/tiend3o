@@ -4,10 +4,13 @@ import {
   type StoreSpace,
   type Product,
   type PlanogramKPIs,
+  type StoreScanPreset,
+  ALL_SCAN_PRESETS,
+  PRESET_BODEGA_ESQUINA,
 } from "@tiend3o/shared";
 import { SAMPLE_PRODUCTS, HISTORICAL_AFFINITIES_10Y } from "@tiend3o/core";
 
-export type ViewMode = "walk" | "orbit" | "topdown";
+export type ViewMode = "isometric" | "counter" | "orbit" | "topdown" | "walk";
 export type OptimizationState = "suboptimal" | "optimized";
 export type OverlayMode = "realistic" | "heatmap" | "lift_arcs";
 export type ThemeMode = "light" | "dark";
@@ -17,6 +20,13 @@ interface PlanogramState {
   themeMode: ThemeMode;
   setThemeMode: (theme: ThemeMode) => void;
   toggleTheme: () => void;
+
+  // Scan & Preset State
+  activePresetId: string;
+  isScannerModalOpen: boolean;
+  isScanningAnimationActive: boolean;
+  diagnostics: string[];
+  isDiagnosticOpen: boolean;
 
   // Layout and Comparative Optimization State
   optimizationState: OptimizationState;
@@ -55,70 +65,85 @@ interface PlanogramState {
   setExecutiveSummaryOpen: (open: boolean) => void;
   setIsSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
+  setDiagnosticOpen: (open: boolean) => void;
+  toggleDiagnostic: () => void;
+  openScannerModal: () => void;
+  closeScannerModal: () => void;
+  selectPreset: (presetId: string) => void;
+  applyOneClickOptimization: () => void;
   setAiRecommendation: (text: string | null) => void;
   setIsAiLoading: (loading: boolean) => void;
   loadComparison: (params?: { width?: number; length?: number; bays?: number }) => Promise<void>;
   requestAiAnalysis: () => Promise<void>;
 }
 
-// Default initial layouts
-const defaultInitialSpace = generateStoreLayout({ storeWidth: 24, storeLength: 36, bayCountPerAisle: 8 });
+// Initial default: Bodega de Esquina (mostrador, vitrina, estantería y snacks)
+const initialPreset = PRESET_BODEGA_ESQUINA;
+const initialOptimized = initialPreset.generateSpace(true);
+const initialSuboptimal = initialPreset.generateSpace(false);
 
 export const usePlanogramStore = create<PlanogramState>((set, get) => ({
   themeMode: "light",
   setThemeMode: (themeMode) => set({ themeMode }),
   toggleTheme: () => set((s) => ({ themeMode: s.themeMode === "light" ? "dark" : "light" })),
 
+  // Scan & Preset State
+  activePresetId: initialPreset.id,
+  isScannerModalOpen: false,
+  isScanningAnimationActive: false,
+  diagnostics: initialPreset.diagnostics,
+  isDiagnosticOpen: true,
+
   optimizationState: "optimized",
   overlayMode: "realistic",
-  space: defaultInitialSpace,
-  suboptimalSpace: defaultInitialSpace,
-  optimizedSpace: defaultInitialSpace,
+  space: initialOptimized,
+  suboptimalSpace: initialSuboptimal,
+  optimizedSpace: initialOptimized,
   products: SAMPLE_PRODUCTS.map((p) => p.toDTO()),
   selectedProductId: null,
   hoveredSlotId: null,
-  viewMode: "orbit",
+  viewMode: "isometric",
 
   kpis: {
-    totalProductsAssigned: 384,
-    spaceUtilizationRate: 1.0,
+    totalProductsAssigned: 72,
+    spaceUtilizationRate: 0.98,
     affinityAlignmentScore: 100,
-    eyeLevelRevenuePotential: 3450.0,
-    hotZoneUtilizationRate: 0.94,
+    eyeLevelRevenuePotential: 1850.0,
+    hotZoneUtilizationRate: 0.92,
     ergonomicViolationsCount: 0,
-    highLiftPairsAdjacent: 8,
-    totalHighLiftPairs: 8,
-    revenuePerLinearMeter: 45.2,
+    highLiftPairsAdjacent: 6,
+    totalHighLiftPairs: 6,
+    revenuePerLinearMeter: 54.2,
   },
   beforeKPIs: {
-    totalProductsAssigned: 384,
-    spaceUtilizationRate: 1.0,
-    affinityAlignmentScore: 12,
-    eyeLevelRevenuePotential: 1120.0,
-    hotZoneUtilizationRate: 0.28,
-    ergonomicViolationsCount: 6,
+    totalProductsAssigned: 72,
+    spaceUtilizationRate: 0.92,
+    affinityAlignmentScore: 24,
+    eyeLevelRevenuePotential: 620.0,
+    hotZoneUtilizationRate: 0.32,
+    ergonomicViolationsCount: 2,
     highLiftPairsAdjacent: 1,
-    totalHighLiftPairs: 8,
-    revenuePerLinearMeter: 14.6,
+    totalHighLiftPairs: 6,
+    revenuePerLinearMeter: 18.4,
   },
   afterKPIs: {
-    totalProductsAssigned: 384,
-    spaceUtilizationRate: 1.0,
+    totalProductsAssigned: 72,
+    spaceUtilizationRate: 0.98,
     affinityAlignmentScore: 100,
-    eyeLevelRevenuePotential: 3450.0,
-    hotZoneUtilizationRate: 0.94,
+    eyeLevelRevenuePotential: 1850.0,
+    hotZoneUtilizationRate: 0.92,
     ergonomicViolationsCount: 0,
-    highLiftPairsAdjacent: 8,
-    totalHighLiftPairs: 8,
-    revenuePerLinearMeter: 45.2,
+    highLiftPairsAdjacent: 6,
+    totalHighLiftPairs: 6,
+    revenuePerLinearMeter: 54.2,
   },
-  revenueImprovementPct: 208,
-  ergonomicViolationsResolved: 6,
-  affinityCoverageImprovementPct: 88,
+  revenueImprovementPct: 24,
+  ergonomicViolationsResolved: 2,
+  affinityCoverageImprovementPct: 76,
   executiveSummary: [
-    "🛡️ Ergonomía y Seguridad: Se resolvieron 6 infracciones críticas reubicando productos pesados (>2.0kg como Gaseosa 2L, Detergente 4L y Carbón) exclusivamente en el Nivel 0 (Piso).",
-    "📈 Optimización de Rentabilidad: Se concentró el top 40% de SKUs por margen y velocidad de rotación en Niveles 1 y 2 (Ojos y Manos), proyectando un incremento del +208% en el valor diario de góndola ($3,450/día vs $1,120/día).",
-    "🔗 Co-ubicación MBA (Lift > 2.0): Se incrementó la adyacencia de pares complementarios al 100% (8/8 pares clave como Cerveza+Snacks, Leche+Cereal y Pasta+Tomate en el mismo módulo o enfrentados).",
+    "🛡️ Ergonomía y Seguridad en Bodega: Se reubicaron galones pesados de Aceite (5kg) y sacos de harina al Nivel 0 (Piso), eliminando el riesgo de caída sobre el bodeguero.",
+    "📈 Vitrina Mostrador Rentabilizada: Se colocaron en la vitrina de vidrio frente al código QR los productos de alto margen (Atún gourmet, Chocolates y Afeitadoras), proyectando +24.8% en ticket promedio.",
+    "🔗 Venta Cruzada Activada (Lift 2.8): Se colocó el exhibidor de snacks junto al punto de pago y frente a la nevera de bebidas frías.",
   ],
   isExecutiveSummaryOpen: false,
   isSidebarOpen: false,
@@ -154,6 +179,48 @@ export const usePlanogramStore = create<PlanogramState>((set, get) => ({
   setExecutiveSummaryOpen: (isExecutiveSummaryOpen) => set({ isExecutiveSummaryOpen }),
   setIsSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
   toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+  setDiagnosticOpen: (isDiagnosticOpen) => set({ isDiagnosticOpen }),
+  toggleDiagnostic: () => set((s) => ({ isDiagnosticOpen: !s.isDiagnosticOpen })),
+  openScannerModal: () => set({ isScannerModalOpen: true }),
+  closeScannerModal: () => set({ isScannerModalOpen: false }),
+
+  selectPreset: (presetId: string) => {
+    const preset = ALL_SCAN_PRESETS.find((p) => p.id === presetId) ?? PRESET_BODEGA_ESQUINA;
+    const subSpace = preset.generateSpace(false);
+    const optSpace = preset.generateSpace(true);
+
+    // Trigger scanning animation
+    set({
+      activePresetId: preset.id,
+      isScannerModalOpen: false,
+      isScanningAnimationActive: true,
+      suboptimalSpace: subSpace,
+      optimizedSpace: optSpace,
+      space: subSpace, // Start in As-Is (scanned/disordered)
+      optimizationState: "suboptimal",
+      diagnostics: preset.diagnostics,
+      isDiagnosticOpen: true,
+      overlayMode: "realistic",
+      revenueImprovementPct: parseInt(preset.optimizationGains.revenueImprovement.replace(/[^0-9]/g, "")) || 25,
+      ergonomicViolationsResolved: preset.optimizationGains.hazardsResolved,
+    });
+
+    // Stop laser animation after 2.2 seconds
+    setTimeout(() => {
+      set({ isScanningAnimationActive: false });
+    }, 2200);
+  },
+
+  applyOneClickOptimization: () => {
+    const s = get();
+    set({
+      optimizationState: "optimized",
+      space: s.optimizedSpace,
+      kpis: s.afterKPIs,
+      overlayMode: "lift_arcs", // Show the activated cross-selling connections!
+      isDiagnosticOpen: false,
+    });
+  },
   setAiRecommendation: (aiRecommendation) => set({ aiRecommendation }),
   setIsAiLoading: (isAiLoading) => set({ isAiLoading }),
 

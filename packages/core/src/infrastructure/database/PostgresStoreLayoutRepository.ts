@@ -44,6 +44,9 @@ export class PostgresStoreLayoutRepository implements IStoreLayoutRepository {
       },
       aisleWidth: Number(row.aisle_width),
       gondolas: gondolas || [],
+      format: "modern_supermarket",
+      fixtures: [],
+      zones: [],
     };
 
     return new StoreLayoutEntity(space);

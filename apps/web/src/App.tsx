@@ -3,6 +3,8 @@ import { StoreWorld } from "./scene/StoreWorld";
 import { StoreNavbar } from "./ui/StoreNavbar";
 import { PlanogramSidebar } from "./ui/PlanogramSidebar";
 import { AIRecommendationModal } from "./ui/AIRecommendationModal";
+import { StoreScannerModal } from "./ui/StoreScannerModal";
+import { ScanDiagnosticPanel } from "./ui/ScanDiagnosticPanel";
 import { usePlanogramStore } from "./store/usePlanogramStore";
 
 export function App() {
@@ -16,8 +18,10 @@ export function App() {
     <div className="relative w-screen h-screen overflow-hidden bg-slate-950 select-none">
       <StoreNavbar />
       <StoreWorld />
+      <ScanDiagnosticPanel />
       <PlanogramSidebar />
       <AIRecommendationModal />
+      <StoreScannerModal />
     </div>
   );
 }

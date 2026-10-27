@@ -2,11 +2,16 @@ import React, { useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { usePlanogramStore } from "../store/usePlanogramStore";
-import { StoreFloor } from "./StoreFloor";
+import { CutawayBuilding } from "./CutawayBuilding";
+import { FixtureRenderer } from "./fixtures/FixtureRenderer";
 import { AisleGondola } from "./AisleGondola";
 import { Player } from "./Player";
 import { StaticMerge } from "./StaticMerge";
 import { LiftArcsOverlay } from "./LiftArcsOverlay";
+import { ScanningLaserEffect } from "./ScanningLaserEffect";
+import { SupermarketCheckouts } from "./SupermarketCheckouts";
+import { SupermarketEntrance } from "./SupermarketEntrance";
+import { SupermarketDepartments } from "./SupermarketDepartments";
 import { BoundingBox2D } from "./walk";
 
 export function StoreWorld() {
@@ -22,6 +27,7 @@ export function StoreWorld() {
   } = usePlanogramStore();
 
   const isLight = themeMode === "light";
+  const isSupermarket = space.format === "modern_supermarket";
 
   const productsMap = useMemo(() => {
     return new Map(products.map((p) => [p.id, p]));
@@ -41,35 +47,73 @@ export function StoreWorld() {
       });
     }
 
-    // Checkout Counters (4 lanes at front)
-    const checkoutZ = space.length / 2 - 6.5;
-    const laneXPositions = [-6.6, -4.2, -1.8, 0.6];
-    for (const lx of laneXPositions) {
-      list.push({
-        minX: lx - 0.55,
-        maxX: lx + 0.55,
-        minZ: checkoutZ - 1.5,
-        maxZ: checkoutZ + 1.5,
-      });
+    // Hybrid Store Fixtures
+    if (space.fixtures) {
+      for (const f of space.fixtures) {
+        list.push({
+          minX: f.position.x - f.dimensions.width / 2,
+          maxX: f.position.x + f.dimensions.width / 2,
+          minZ: f.position.z - f.dimensions.depth / 2,
+          maxZ: f.position.z + f.dimensions.depth / 2,
+        });
+      }
     }
-
-    // Shopping Carts Corral at entrance
-    list.push({
-      minX: 6.0 + 3.2 - 0.8,
-      maxX: 6.0 + 3.2 + 0.8,
-      minZ: space.length / 2 - 1.2 - 0.6 - 1.4,
-      maxZ: space.length / 2 - 1.2 - 0.6 + 1.4,
-    });
 
     return list;
   }, [space]);
 
-  const cameraInitialPosition: [number, number, number] =
-    viewMode === "topdown"
-      ? [0, 24, 0.01]
-      : viewMode === "orbit"
-      ? [0, 16, 22]
-      : [6.0, 1.7, space.length / 2 - 1.5]; // Enter from entrance door
+  // Compute camera position and target based on viewMode
+  const { cameraPos, cameraTarget, cameraFov } = useMemo(() => {
+    switch (viewMode) {
+      case "isometric":
+        return {
+          cameraPos: [
+            Math.max(space.width * 0.75, 7.5),
+            Math.max(space.ceilingHeight * 2.2, 8.5),
+            Math.max(space.length * 0.75, 8.8),
+          ] as [number, number, number],
+          cameraTarget: [0, 0.8, 0] as [number, number, number],
+          cameraFov: 36, // Low architectural FOV for isometric feel
+        };
+      case "counter":
+        return {
+          cameraPos: [
+            space.checkoutPosition.x,
+            1.65, // Shopper eye level
+            space.checkoutPosition.z + 1.5, // Standing in front of counter
+          ] as [number, number, number],
+          cameraTarget: [
+            space.checkoutPosition.x,
+            1.1,
+            space.checkoutPosition.z,
+          ] as [number, number, number],
+          cameraFov: 55,
+        };
+      case "topdown":
+        return {
+          cameraPos: [0, Math.max(space.width, space.length) * 1.15, 0.01] as [number, number, number],
+          cameraTarget: [0, 0, 0] as [number, number, number],
+          cameraFov: 42,
+        };
+      case "orbit":
+        return {
+          cameraPos: [0, 10, 14] as [number, number, number],
+          cameraTarget: [0, 1.0, 0] as [number, number, number],
+          cameraFov: 55,
+        };
+      case "walk":
+      default:
+        return {
+          cameraPos: [
+            space.entrancePosition.x,
+            1.65,
+            space.entrancePosition.z,
+          ] as [number, number, number],
+          cameraTarget: [0, 1.2, 0] as [number, number, number],
+          cameraFov: 60,
+        };
+    }
+  }, [viewMode, space]);
 
   return (
     <Canvas
@@ -81,11 +125,11 @@ export function StoreWorld() {
     >
       <PerspectiveCamera
         makeDefault
-        position={cameraInitialPosition}
-        fov={viewMode === "topdown" ? 45 : 60}
+        position={cameraPos}
+        fov={cameraFov}
       />
 
-      {/* Balanced Supermarket Illumination */}
+      {/* Balanced Supermarket / Bodega Illumination */}
       <ambientLight intensity={isLight ? 1.15 : 0.65} />
 
       {/* Main Overhead Directional Sunlight / Track Light */}
@@ -96,24 +140,28 @@ export function StoreWorld() {
         shadow-mapSize={[2048, 2048]}
       />
 
-      {/* Soft Secondary Fill Light for Uniform Supermarket Visibility */}
+      {/* Soft Secondary Fill Light for Uniform Architectural Visibility */}
       <directionalLight
         position={[-14, 18, -14]}
         intensity={isLight ? 0.75 : 0.3}
       />
 
-      {/* Complete Supermarket Environment: Floor, Checkouts, Entrance, Departments */}
-      <StoreFloor space={space} />
+      {/* Cutaway Diorama Building Architecture (Zoned Floors & Cutaway Walls) */}
+      <CutawayBuilding space={space} />
 
-      {/* MBA Lift Arcs 3D Overlay */}
-      <LiftArcsOverlay />
+      {/* Vision-to-3D Scanning Holographic Laser Effect */}
+      <ScanningLaserEffect
+        storeWidth={space.width}
+        storeLength={space.length}
+        ceilingHeight={space.ceilingHeight}
+      />
 
-      {/* Batch-Merged Shelving Geometry for 60 FPS Performance */}
-      <StaticMerge>
-        {space.gondolas.map((gondola) => (
-          <AisleGondola
-            key={gondola.id}
-            gondola={gondola}
+      {/* Hybrid Store Fixtures (Glass Counter, Wire Snack Rack, Cooler, Wall Shelves, etc.) */}
+      {space.fixtures &&
+        space.fixtures.map((fixture) => (
+          <FixtureRenderer
+            key={fixture.id}
+            fixture={fixture}
             productsMap={productsMap}
             selectedProductId={selectedProductId}
             hoveredSlotId={hoveredSlotId}
@@ -121,12 +169,48 @@ export function StoreWorld() {
             onSlotHover={hoverSlot}
           />
         ))}
-      </StaticMerge>
+
+      {/* Standard Supermarket Gondolas (if present in layout) */}
+      {space.gondolas && space.gondolas.length > 0 && (
+        <StaticMerge>
+          {space.gondolas.map((gondola) => (
+            <AisleGondola
+              key={gondola.id}
+              gondola={gondola}
+              productsMap={productsMap}
+              selectedProductId={selectedProductId}
+              hoveredSlotId={hoveredSlotId}
+              onSelectProduct={selectProduct}
+              onSlotHover={hoverSlot}
+            />
+          ))}
+        </StaticMerge>
+      )}
+
+      {/* Modern Supermarket Context Elements (Only in Modern Supermarket Format) */}
+      {isSupermarket && (
+        <>
+          <SupermarketCheckouts storeWidth={space.width} storeLength={space.length} />
+          <SupermarketEntrance
+            storeWidth={space.width}
+            storeLength={space.length}
+            ceilingHeight={space.ceilingHeight}
+          />
+          <SupermarketDepartments
+            storeWidth={space.width}
+            storeLength={space.length}
+            ceilingHeight={space.ceilingHeight}
+          />
+        </>
+      )}
+
+      {/* MBA Lift Arcs 3D Overlay */}
+      <LiftArcsOverlay />
 
       {viewMode === "walk" ? (
         <Player
           active={true}
-          initialPosition={[6.0, 1.7, space.length / 2 - 1.5]}
+          initialPosition={[space.entrancePosition.x, 1.65, space.entrancePosition.z]}
           colliders={colliders}
         />
       ) : (
@@ -134,7 +218,7 @@ export function StoreWorld() {
           enableDamping
           dampingFactor={0.05}
           maxPolarAngle={viewMode === "topdown" ? 0.01 : Math.PI / 2.05}
-          target={[0, 1.2, 0]}
+          target={cameraTarget}
         />
       )}
     </Canvas>

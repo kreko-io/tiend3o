@@ -80,6 +80,7 @@ export function generateStoreLayout(config: Partial<StoreGridConfig> = {}): Stor
   return {
     id: "store-main-layout",
     name: "Main Retail Floor",
+    format: "modern_supermarket",
     width: cfg.storeWidth,
     length: cfg.storeLength,
     ceilingHeight: 4.5,
@@ -87,6 +88,8 @@ export function generateStoreLayout(config: Partial<StoreGridConfig> = {}): Stor
     checkoutPosition: { x: cfg.storeWidth / 4, y: 0, z: cfg.storeLength / 2 - 2 },
     aisleWidth: cfg.aisleWidth,
     gondolas,
+    fixtures: [],
+    zones: [],
   };
 }
 

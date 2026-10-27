@@ -48,6 +48,40 @@ export function LiftArcsOverlay() {
       }
     }
 
+    // Also scan hybrid store fixtures (Glass counter, Wire rack, Cooler unit, Wall shelving)
+    if (space.fixtures) {
+      for (const fix of space.fixtures) {
+        const cos = Math.cos(fix.rotationY || 0);
+        const sin = Math.sin(fix.rotationY || 0);
+
+        for (const shelf of fix.shelves) {
+          const slotCount = Math.max(1, shelf.slots.length);
+          const slotStep = (fix.dimensions.width * 0.85) / slotCount;
+          const startX = -((slotCount - 1) * slotStep) / 2;
+
+          for (let sIdx = 0; sIdx < shelf.slots.length; sIdx++) {
+            const slot = shelf.slots[sIdx];
+            if (!slot.productId) continue;
+
+            const localX = startX + sIdx * slotStep;
+            const localY = shelf.heightOffset + 0.1;
+            const localZ = 0;
+
+            const rotX = localX * cos + localZ * sin;
+            const rotZ = -localX * sin + localZ * cos;
+
+            const worldX = fix.position.x + rotX;
+            const worldY = fix.position.y + localY;
+            const worldZ = fix.position.z + rotZ;
+
+            const existing = map.get(slot.productId) ?? [];
+            existing.push([worldX, worldY, worldZ]);
+            map.set(slot.productId, existing);
+          }
+        }
+      }
+    }
+
     return map;
   }, [space, isVisible]);
 

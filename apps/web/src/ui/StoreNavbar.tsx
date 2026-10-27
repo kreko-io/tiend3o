@@ -6,7 +6,6 @@ import {
   Sparkles,
   Store,
   RefreshCw,
-  SlidersHorizontal,
   Flame,
   GitBranch,
   Box,
@@ -15,8 +14,13 @@ import {
   BarChart3,
   Sun,
   Moon,
+  Scan,
+  Boxes,
+  UserCheck,
+  Building2,
 } from "lucide-react";
 import { usePlanogramStore, ViewMode, OverlayMode, OptimizationState } from "../store/usePlanogramStore";
+import { ALL_SCAN_PRESETS } from "@tiend3o/shared";
 
 export function StoreNavbar() {
   const {
@@ -28,11 +32,13 @@ export function StoreNavbar() {
     setOverlayMode,
     requestAiAnalysis,
     isAiLoading,
-    loadComparison,
     isSidebarOpen,
     toggleSidebar,
     themeMode,
     toggleTheme,
+    openScannerModal,
+    activePresetId,
+    selectPreset,
   } = usePlanogramStore();
 
   return (
@@ -48,17 +54,49 @@ export function StoreNavbar() {
               tiend3o
             </h1>
             <span className="px-1.5 py-0.2 text-[9px] font-bold tracking-widest uppercase rounded bg-sky-500/15 text-sky-400 border border-sky-500/30">
-              PoC Demo
+              Scan-to-Planogram
             </span>
           </div>
           <p className="text-[11px] text-slate-400">
-            3D Retail Planogram & Market Basket Analysis
+            Diorama 3D • Retail & Bodegas • Market Basket Analysis
           </p>
         </div>
       </div>
 
+      {/* Preset Selector (Bodega vs Fachada vs Supermercado) */}
+      <div className="flex items-center gap-1 bg-slate-950/70 p-1 rounded-xl border border-slate-700/80 shadow-inner">
+        {ALL_SCAN_PRESETS.map((p) => {
+          const isActive = activePresetId === p.id;
+          return (
+            <button
+              key={p.id}
+              onClick={() => selectPreset(p.id)}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${
+                isActive
+                  ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+              title={p.description}
+            >
+              <Building2 className="w-3 h-3 text-sky-400" />
+              <span>{p.name.split("/")[0].trim()}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Escáner de Tienda (Vision-to-3D) Button */}
+      <button
+        onClick={openScannerModal}
+        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 hover:from-sky-600 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-500/20 transition active:scale-95 group"
+        title="Abrir pipeline de escaneo visual con fotos y detección de muebles"
+      >
+        <Scan className="w-3.5 h-3.5 text-sky-200 group-hover:rotate-90 transition-transform duration-300" />
+        <span>Escanear Tienda</span>
+      </button>
+
       {/* Comparison Toggle (Before vs After) */}
-      <div className="flex items-center gap-1.5 bg-slate-950/70 p-1 rounded-xl border border-slate-700/80 shadow-inner">
+      <div className="flex items-center gap-1 bg-slate-950/70 p-1 rounded-xl border border-slate-700/80 shadow-inner">
         <button
           onClick={() => setOptimizationState("suboptimal")}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
@@ -66,10 +104,10 @@ export function StoreNavbar() {
               ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm"
               : "text-slate-400 hover:text-slate-200"
           }`}
-          title="Ver distribución actual con infracciones ergonómicas y pares dispersos"
+          title="Ver distribución As-Is detectada con infracciones y productos desordenados"
         >
           <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-          Estado Actual (Sub-óptimo)
+          As-Is (Escaneado)
         </button>
 
         <button
@@ -79,7 +117,7 @@ export function StoreNavbar() {
               ? "bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm shadow-emerald-500/10"
               : "text-slate-400 hover:text-slate-200"
           }`}
-          title="Aplicar reglas heurísticas de MBA (Lift > 2.0) y nivel de ojos"
+          title="Aplicar optimización 1-Click con reglas de Lift y ergonomía"
         >
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
           Optimizado (IA + MBA)
@@ -102,19 +140,6 @@ export function StoreNavbar() {
         </button>
 
         <button
-          onClick={() => setOverlayMode("heatmap")}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-            overlayMode === "heatmap"
-              ? "bg-gradient-to-r from-emerald-500 to-amber-500 text-white shadow-md shadow-amber-500/25"
-              : "text-slate-400 hover:text-slate-200"
-          }`}
-          title="Mapa de calor por score financiero de cada slot"
-        >
-          <Flame className="w-3.5 h-3.5" />
-          Heatmap Rentabilidad
-        </button>
-
-        <button
           onClick={() => setOverlayMode("lift_arcs")}
           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition ${
             overlayMode === "lift_arcs"
@@ -124,13 +149,35 @@ export function StoreNavbar() {
           title="Grafo 3D de arcos Bézier conectando pares con Lift > 2.0"
         >
           <GitBranch className="w-3.5 h-3.5" />
-          Arcos de Lift (MBA)
+          Arcos Lift
         </button>
       </div>
 
       {/* View Mode Switcher & Controls */}
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700">
+          <button
+            onClick={() => setViewMode("isometric")}
+            className={`p-1.5 rounded-lg transition ${
+              viewMode === "isometric"
+                ? "bg-sky-500/20 text-sky-400"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+            title="Vista Maqueta Isométrica Cutaway (45°)"
+          >
+            <Boxes className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setViewMode("counter")}
+            className={`p-1.5 rounded-lg transition ${
+              viewMode === "counter"
+                ? "bg-sky-500/20 text-sky-400"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+            title="Vista Cliente en Mostrador / Pago QR (1.65m)"
+          >
+            <UserCheck className="w-4 h-4" />
+          </button>
           <button
             onClick={() => setViewMode("orbit")}
             className={`p-1.5 rounded-lg transition ${
@@ -166,20 +213,6 @@ export function StoreNavbar() {
           </button>
         </div>
 
-        {/* AI Strategist Button */}
-        <button
-          onClick={requestAiAnalysis}
-          disabled={isAiLoading}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white text-xs font-semibold shadow-md shadow-indigo-500/20 transition disabled:opacity-50"
-        >
-          {isAiLoading ? (
-            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <Sparkles className="w-3.5 h-3.5" />
-          )}
-          Estrategia IA
-        </button>
-
         {/* Theme Mode Switcher */}
         <button
           onClick={toggleTheme}
@@ -188,7 +221,7 @@ export function StoreNavbar() {
               ? "bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30"
               : "bg-indigo-500/20 border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/30"
           }`}
-          title={themeMode === "light" ? "Cambiar a Modo Oscuro" : "Cambiar a Modo Comercial Claro (Iluminación Realista)"}
+          title={themeMode === "light" ? "Cambiar a Modo Oscuro" : "Cambiar a Modo Comercial Claro"}
         >
           {themeMode === "light" ? (
             <>
