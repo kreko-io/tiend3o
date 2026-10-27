@@ -15,7 +15,15 @@ export interface CategoryAffinitySummary {
  * Historical Inference Engine simulating insights from 10 years of POS and basket data.
  */
 export class HistoricalInferenceEngine {
-  private affinities: ProductAffinity[] = HISTORICAL_AFFINITIES_10Y;
+  private affinities: ProductAffinity[];
+
+  constructor(affinities: ProductAffinity[] = HISTORICAL_AFFINITIES_10Y) {
+    this.affinities = affinities;
+  }
+
+  setAffinities(affinities: ProductAffinity[]): void {
+    this.affinities = affinities;
+  }
 
   getAllAffinities(): ProductAffinity[] {
     return this.affinities;

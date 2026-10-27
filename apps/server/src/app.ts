@@ -4,38 +4,127 @@ import {
   GeneratePlanogramUseCase,
   InMemoryProductRepository,
   InMemoryStoreLayoutRepository,
+  InMemoryAffinityRepository,
   HeuristicPlanogramOptimizer,
-  SAMPLE_PRODUCTS,
+  IProductRepository,
+  IStoreLayoutRepository,
+  IAffinityRepository,
 } from "@tiend3o/core";
+import {
+  DatabasePool,
+  PostgresProductRepository,
+  PostgresStoreLayoutRepository,
+  PostgresAffinityRepository,
+} from "@tiend3o/core/database";
 import { HistoricalInferenceEngine } from "./infrastructure/inference/HistoricalInferenceEngine";
 import { AnthropicLayoutClient } from "./infrastructure/ai/AnthropicClient";
 import { buildPlanogramRecommendationPrompt } from "./infrastructure/ai/prompts/planogramPrompts";
 
-export function createApp() {
+export interface AppDependencies {
+  productRepo?: IProductRepository;
+  storeRepo?: IStoreLayoutRepository;
+  affinityRepo?: IAffinityRepository;
+  databasePool?: DatabasePool;
+}
+
+export function createApp(deps: AppDependencies = {}) {
   const app = express();
   app.use(cors());
   app.use(express.json());
 
-  const productRepo = new InMemoryProductRepository();
-  const storeRepo = new InMemoryStoreLayoutRepository();
+  // Determine repository implementations (Clean Architecture: DI with PostgreSQL or In-Memory fallback)
+  let dbPool: DatabasePool | null = deps.databasePool ?? null;
+  let isPostgres = false;
+
+  if (!dbPool && process.env.DATABASE_URL) {
+    try {
+      dbPool = DatabasePool.getInstance(process.env.DATABASE_URL);
+      isPostgres = true;
+    } catch {
+      dbPool = null;
+      isPostgres = false;
+    }
+  }
+
+  const productRepo: IProductRepository =
+    deps.productRepo ?? (dbPool ? new PostgresProductRepository(dbPool) : new InMemoryProductRepository());
+  const storeRepo: IStoreLayoutRepository =
+    deps.storeRepo ?? (dbPool ? new PostgresStoreLayoutRepository(dbPool) : new InMemoryStoreLayoutRepository());
+  const affinityRepo: IAffinityRepository =
+    deps.affinityRepo ?? (dbPool ? new PostgresAffinityRepository(dbPool) : new InMemoryAffinityRepository());
+
   const optimizer = new HeuristicPlanogramOptimizer();
   const generatePlanogramUseCase = new GeneratePlanogramUseCase(storeRepo, productRepo, optimizer);
 
   const inferenceEngine = new HistoricalInferenceEngine();
   const aiClient = new AnthropicLayoutClient();
 
-  app.get("/health", (_req, res) => {
+  app.get("/health", async (_req, res) => {
+    let dbStatus: { connected: boolean; latencyMs?: number; database?: string; type: string } = {
+      connected: !isPostgres,
+      type: isPostgres ? "postgresql" : "in-memory",
+    };
+
+    if (dbPool) {
+      const health = await dbPool.checkHealth();
+      dbStatus = {
+        connected: health.connected,
+        latencyMs: health.latencyMs,
+        database: health.database,
+        type: "postgresql",
+      };
+    }
+
     res.json({
       status: "ok",
       service: "tiend3o-server",
       timestamp: new Date().toISOString(),
+      database: dbStatus,
       aiConfigured: aiClient.isAvailable(),
     });
   });
 
+  app.get("/api/db/status", async (_req, res) => {
+    try {
+      if (!dbPool) {
+        res.json({
+          mode: "in-memory",
+          connected: true,
+          productsCount: (await productRepo.findAll()).length,
+        });
+        return;
+      }
+
+      const health = await dbPool.checkHealth();
+      const products = await productRepo.findAll();
+      const affinities =
+        affinityRepo instanceof PostgresAffinityRepository
+          ? await affinityRepo.getAllAffinities()
+          : [];
+
+      res.json({
+        mode: "postgresql",
+        connected: health.connected,
+        database: health.database,
+        latencyMs: health.latencyMs,
+        activeConnections: health.activeConnections,
+        productsCount: products.length,
+        affinitiesCount: affinities.length,
+      });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Database error";
+      res.status(500).json({ error: message, connected: false });
+    }
+  });
+
   app.get("/api/products", async (_req, res) => {
-    const products = await productRepo.findAll();
-    res.json(products.map((p) => p.props));
+    try {
+      const products = await productRepo.findAll();
+      res.json(products.map((p) => p.props));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Error fetching products";
+      res.status(500).json({ error: message });
+    }
   });
 
   app.post("/api/planogram/generate", async (req, res) => {
@@ -60,15 +149,27 @@ export function createApp() {
     }
   });
 
-  app.get("/api/inference/affinities", (_req, res) => {
-    const topPairs = inferenceEngine.getTopPairs();
-    const matrix = inferenceEngine.getAffinityMatrix();
-    res.json({
-      summary: "10-Year Historical Association Rules & Basket Analysis",
-      totalTransactionsAnalyzed: "12,450,000 POS records",
-      topPairs,
-      matrix,
-    });
+  app.get("/api/inference/affinities", async (_req, res) => {
+    try {
+      if (affinityRepo instanceof PostgresAffinityRepository) {
+        const dbAffinities = await affinityRepo.getAllAffinities();
+        if (dbAffinities.length > 0) {
+          inferenceEngine.setAffinities(dbAffinities);
+        }
+      }
+
+      const topPairs = inferenceEngine.getTopPairs();
+      const matrix = inferenceEngine.getAffinityMatrix();
+      res.json({
+        summary: "10-Year Historical Association Rules & Basket Analysis",
+        totalTransactionsAnalyzed: "12,450,000 POS records",
+        topPairs,
+        matrix,
+      });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Inference error";
+      res.status(500).json({ error: message });
+    }
   });
 
   app.post("/api/ai/recommendation", async (req, res) => {

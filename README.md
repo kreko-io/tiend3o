@@ -62,12 +62,19 @@ cd tiend3o
 pnpm install
 ```
 
-### 2. Environment Setup
+### 2. Environment & Local Database Setup
 
 ```bash
 cp .env.example .env
-# Optional: Add your ANTHROPIC_API_KEY for generative merchandising advice.
-# Operates with deterministic heuristic optimizer if no API key is set.
+
+# Start local PostgreSQL database container (port 5433)
+pnpm run db:up
+
+# Check database connection and health status
+pnpm run db:status
+
+# Seed or re-seed retail products, layout distribution and 10-year affinity matrix
+pnpm run db:seed
 ```
 
 ### 3. Run Development Server
@@ -80,6 +87,7 @@ pnpm run dev
 - **Web Application:** `http://localhost:5173`
 - **Backend API:** `http://localhost:3001`
 - **Health Check:** `http://localhost:3001/health`
+- **Database Status:** `http://localhost:3001/api/db/status`
 
 ### 4. Run Tests & Typechecks
 

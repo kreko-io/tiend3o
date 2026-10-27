@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tiend3o-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tiend3o}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tiend3o_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-tiend3o_db}
+    ports:
+      - "${PORT_DB:-5433}:5432"
+    volumes:
+      - tiend3o_pgdata:/var/lib/postgresql/data
+      - ./docker/01_init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+      - ./docker/02_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tiend3o} -d ${POSTGRES_DB:-tiend3o_db}"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  tiend3o_pgdata:
+    driver: local

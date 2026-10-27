@@ -33,4 +33,11 @@ describe("Server API Integration", () => {
     expect(res.body.topPairs.length).toBeGreaterThan(0);
     expect(res.body.matrix).toBeDefined();
   });
+
+  it("returns database status endpoint", async () => {
+    const res = await request(app).get("/api/db/status");
+    expect(res.status).toBe(200);
+    expect(res.body.connected).toBe(true);
+    expect(res.body.productsCount).toBeGreaterThan(0);
+  });
 });
