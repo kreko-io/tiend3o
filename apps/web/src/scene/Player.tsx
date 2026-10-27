@@ -20,6 +20,7 @@ export function Player({
 
   useEffect(() => {
     camera.position.set(initialPosition[0], initialPosition[1], initialPosition[2]);
+    camera.lookAt(0, EYE_HEIGHT, 0);
   }, [camera, initialPosition]);
 
   useEffect(() => {

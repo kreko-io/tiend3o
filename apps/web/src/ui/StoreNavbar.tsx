@@ -13,6 +13,8 @@ import {
   AlertTriangle,
   CheckCircle2,
   BarChart3,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { usePlanogramStore, ViewMode, OverlayMode, OptimizationState } from "../store/usePlanogramStore";
 
@@ -29,6 +31,8 @@ export function StoreNavbar() {
     loadComparison,
     isSidebarOpen,
     toggleSidebar,
+    themeMode,
+    toggleTheme,
   } = usePlanogramStore();
 
   return (
@@ -174,6 +178,29 @@ export function StoreNavbar() {
             <Sparkles className="w-3.5 h-3.5" />
           )}
           Estrategia IA
+        </button>
+
+        {/* Theme Mode Switcher */}
+        <button
+          onClick={toggleTheme}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition ${
+            themeMode === "light"
+              ? "bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30"
+              : "bg-indigo-500/20 border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/30"
+          }`}
+          title={themeMode === "light" ? "Cambiar a Modo Oscuro" : "Cambiar a Modo Comercial Claro (Iluminación Realista)"}
+        >
+          {themeMode === "light" ? (
+            <>
+              <Sun className="w-3.5 h-3.5 text-amber-400" />
+              <span>Claro</span>
+            </>
+          ) : (
+            <>
+              <Moon className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Oscuro</span>
+            </>
+          )}
         </button>
 
         {/* Metrics Panel Toggle */}

@@ -10,8 +10,14 @@ import { SAMPLE_PRODUCTS, HISTORICAL_AFFINITIES_10Y } from "@tiend3o/core";
 export type ViewMode = "walk" | "orbit" | "topdown";
 export type OptimizationState = "suboptimal" | "optimized";
 export type OverlayMode = "realistic" | "heatmap" | "lift_arcs";
+export type ThemeMode = "light" | "dark";
 
 interface PlanogramState {
+  // Store Environment Theme
+  themeMode: ThemeMode;
+  setThemeMode: (theme: ThemeMode) => void;
+  toggleTheme: () => void;
+
   // Layout and Comparative Optimization State
   optimizationState: OptimizationState;
   overlayMode: OverlayMode;
@@ -59,6 +65,10 @@ interface PlanogramState {
 const defaultInitialSpace = generateStoreLayout({ storeWidth: 24, storeLength: 36, bayCountPerAisle: 8 });
 
 export const usePlanogramStore = create<PlanogramState>((set, get) => ({
+  themeMode: "light",
+  setThemeMode: (themeMode) => set({ themeMode }),
+  toggleTheme: () => set((s) => ({ themeMode: s.themeMode === "light" ? "dark" : "light" })),
+
   optimizationState: "optimized",
   overlayMode: "realistic",
   space: defaultInitialSpace,
